@@ -21,7 +21,7 @@ jobs:
           RUN_ONCE: "1"
           EXCHANGE: kraken
           MARKETS: "BTC,GOLD"
-          GEMINI_MODEL: gemini-3.8-flash
+          GEMINI_MODEL: gemini-3.5-flash-lite
           MAX_RUN_MINUTES: "35"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
