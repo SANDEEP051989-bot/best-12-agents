@@ -6,6 +6,11 @@
     "said": "SELL",
     "right": true,
     "price": 75578.51
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
    }
   ],
   "BTC:daily_view": [
@@ -13,6 +18,11 @@
     "said": "SELL",
     "right": true,
     "price": 75578.51
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
    }
   ],
   "BTC:news": [
@@ -20,6 +30,11 @@
     "said": "SELL",
     "right": true,
     "price": 75578.51
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
    }
   ],
   "BTC:macro": [
@@ -27,6 +42,11 @@
     "said": "SELL",
     "right": true,
     "price": 75578.51
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
    }
   ],
   "BTC:special": [
@@ -34,6 +54,11 @@
     "said": "BUY",
     "right": false,
     "price": 75578.51
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 75236.57
    }
   ],
   "GOLD:trend": [
@@ -76,6 +101,20 @@
     "said": "SELL",
     "right": false,
     "price": 4046.3
+   }
+  ],
+  "BTC:levels": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
+   }
+  ],
+  "BTC:bear": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 75236.57
    }
   ]
  },
@@ -163,7 +202,8 @@
    "inspector_changes": {
     "daily_view": "WAIT",
     "news": "WAIT"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793977531.4782991,
@@ -681,10 +721,44 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1794005573.8849797,
+   "market": "BTC",
+   "price": 75916.08,
+   "atr": 455.3884,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "BUY",
+    "volatility": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794005575.891946,
+   "market": "GOLD",
+   "price": 4079.5,
+   "atr": 16.4571,
+   "votes": {
+    "mood": "BUY",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794005577.897995,
+   "market": "OIL",
+   "price": 90.34,
+   "atr": 1.01,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [],
  "last_oi": {
-  "okx": 34880.0
+  "okx": 34599.0
  }
 }
