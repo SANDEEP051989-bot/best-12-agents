@@ -43,6 +43,7 @@ import ccxt
 import pandas as pd
 import requests
 from google import genai
+from google.genai import types
 
 # ------------------------------------------------------------------ settings
 MARKETS     = [m.strip().upper() for m in os.getenv("MARKETS", "BTC,GOLD").split(",") if m.strip()]
@@ -52,6 +53,7 @@ MIN_AGREE   = int(os.getenv("MIN_AGREE", "8"))       # out of 12
 MIN_CONF    = float(os.getenv("MIN_CONF", "6"))      # average confidence, 0 to 10
 CALL_GAP    = float(os.getenv("CALL_GAP_SECONDS", "7"))  # pause between AI calls (free limit ~10 a minute)
 SLEEP_SECS  = int(os.getenv("SLEEP_SECONDS", "3600"))
+MAX_MINUTES = float(os.getenv("MAX_RUN_MINUTES", "35"))   # stop safely before GitHub's time limit
 TG_TOKEN    = os.getenv("TG_TOKEN")
 TG_CHAT     = os.getenv("TG_CHAT")
 
@@ -63,8 +65,29 @@ NEWS_QUERY = {"BTC": "bitcoin", "GOLD": "gold price"}
 NAMES = {"BTC": "Bitcoin (BTC)", "GOLD": "Gold (via PAXG, a token that follows the gold price)"}
 UA = {"User-Agent": "Mozilla/5.0 (twelve-agents bot)"}
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-ex = getattr(ccxt, EXCHANGE)()
+# backup models: if the first one is not available, the next one is tried
+MODELS = [MODEL] + [m for m in ("gemini-2.5-flash-lite", "gemini-flash-latest", "gemini-2.5-flash") if m != MODEL]
+model_i = 0
+fails_in_row = 0
+START = time.time()
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"),
+                      http_options=types.HttpOptions(timeout=60_000))   # one AI call can wait max 60 seconds
+ex = getattr(ccxt, EXCHANGE)({"timeout": 20000})
+
+
+def log(*a):
+    print(*a, flush=True)   # flush = shows in GitHub log immediately
+
+
+class AIDown(Exception):
+    pass
+
+
+def check_time():
+    used = (time.time() - START) / 60
+    if used > MAX_MINUTES:
+        raise TimeoutError(f"run took {used:.0f} minutes, stopped safely")
 
 
 # ------------------------------------------------------------------ market data
@@ -279,21 +302,60 @@ VOTE_JSON = '{"vote":"BUY or SELL or WAIT","confidence":0 to 10,"reason":"one sh
 
 
 def ask(prompt, fallback):
+    global model_i, fails_in_row
     for attempt in range(3):
+        check_time()
         time.sleep(CALL_GAP)
         try:
-            t = client.models.generate_content(model=MODEL, contents=prompt).text or ""
-            j = json.loads(t[t.find("{"): t.rfind("}") + 1])
-            if "vote" in j:
-                j["vote"] = str(j["vote"]).upper().strip()
-                if j["vote"] not in ("BUY", "SELL", "WAIT"):
-                    j["vote"] = "WAIT"
-                j["confidence"] = max(0.0, min(10.0, float(j.get("confidence") or 0)))
-            return j
+            t = client.models.generate_content(model=MODELS[model_i], contents=prompt).text or ""
         except Exception as e:
-            print(f"  AI retry {attempt + 1}: {e.__class__.__name__}: {str(e)[:120]}")
-            time.sleep(15 * (attempt + 1))
+            msg = f"{e.__class__.__name__}: {str(e)[:250]}"
+            low = str(e).lower()
+            log(f"  AI error (try {attempt + 1}, model {MODELS[model_i]}): {msg}")
+            if ("not found" in low or "404" in low) and model_i + 1 < len(MODELS):
+                model_i += 1
+                log(f"  switching to model {MODELS[model_i]}")
+                continue
+            if any(k in low for k in ("api key", "api_key", "permission", "401", "403", "unauthenticated")):
+                raise AIDown("Gemini key problem - " + msg)
+            fails_in_row += 1
+            if fails_in_row >= 5:
+                raise AIDown("Gemini is not answering - " + msg)
+            time.sleep(30 if ("429" in low or "resource_exhausted" in low or "quota" in low) else 5)
+            continue
+        fails_in_row = 0
+        try:
+            j = json.loads(t[t.find("{"): t.rfind("}") + 1])
+        except Exception:
+            log(f"  AI reply was not JSON (try {attempt + 1}): {t[:120]!r}")
+            continue
+        if "vote" in j:
+            j["vote"] = str(j["vote"]).upper().strip()
+            if j["vote"] not in ("BUY", "SELL", "WAIT"):
+                j["vote"] = "WAIT"
+            try:
+                j["confidence"] = max(0.0, min(10.0, float(j.get("confidence") or 0)))
+            except (TypeError, ValueError):
+                j["confidence"] = 0.0
+        return j
     return dict(fallback)
+
+
+def test_ai():
+    """One tiny call at the start, so a bad key or model shows up in 1 minute, not 20."""
+    global model_i
+    while True:
+        try:
+            client.models.generate_content(model=MODELS[model_i], contents="Reply with the word OK")
+            log(f"Gemini OK (model {MODELS[model_i]})")
+            return
+        except Exception as e:
+            low = str(e).lower()
+            if ("not found" in low or "404" in low) and model_i + 1 < len(MODELS):
+                log(f"Model {MODELS[model_i]} not available, trying {MODELS[model_i + 1]}")
+                model_i += 1
+                continue
+            raise AIDown(f"Gemini test failed - {e.__class__.__name__}: {str(e)[:250]}")
 
 
 SPECIALISTS = [
@@ -330,6 +392,7 @@ SPECIALISTS = [
 
 def run_market(market):
     symbol = SYMBOLS.get(EXCHANGE, SYMBOLS["kraken"])[market]
+    log(f"Getting prices for {symbol} from {EXCHANGE} ...")
     h1, h4, d1 = candles(symbol, "1h"), candles(symbol, "4h"), candles(symbol, "1d", 250)
     price = h1.c.iloc[-1]
     a = atr(h1).iloc[-1]
@@ -345,6 +408,7 @@ def run_market(market):
         "sent": (fear_greed() if market == "BTC" else "No fear & greed index for gold.") + "\n" + news_block(market),
         "macro": macro_block(),
     }
+    log("All data ready, asking the 12 agents ...")
 
     opinions = []
     for name, role, key in SPECIALISTS:
@@ -353,7 +417,7 @@ def run_market(market):
         o = ask(p, {"vote": "WAIT", "confidence": 0, "reason": "no answer from AI"})
         o["agent"] = name
         opinions.append(o)
-        print(f"  {name}: {o.get('vote')} ({o.get('confidence')})")
+        log(f"  {name}: {o.get('vote')} ({o.get('confidence')})")
 
     board = json.dumps([{k: o.get(k) for k in ("agent", "vote", "confidence", "reason")} for o in opinions])
     short = head + data["trend"] + "\n" + data["inst"]
@@ -435,22 +499,39 @@ def run_market(market):
 
 
 def tell(msg):
-    print(msg)
-    if TG_TOKEN and TG_CHAT:
-        try:
-            requests.post(f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
-                          data={"chat_id": TG_CHAT, "text": msg[:4000]}, timeout=15)
-        except Exception as e:
-            print("Telegram error:", e)
+    log(msg)
+    if not (TG_TOKEN and TG_CHAT):
+        log("Telegram: TG_TOKEN or TG_CHAT secret is missing, message not sent")
+        return
+    try:
+        res = requests.post(f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
+                            data={"chat_id": TG_CHAT, "text": msg[:4000]}, timeout=15).json()
+        log("Telegram: sent" if res.get("ok") else f"Telegram error: {res.get('description')}")
+    except Exception as e:
+        log("Telegram error:", e)
 
 
 def run_once():
+    global START
+    START = time.time()
+    log(f"Start. Markets {MARKETS}, exchange {EXCHANGE}, model {MODELS[0]}")
+    log(f"Secrets found: GEMINI_API_KEY={'yes' if os.getenv('GEMINI_API_KEY') else 'NO'}, "
+        f"TG_TOKEN={'yes' if TG_TOKEN else 'NO'}, TG_CHAT={'yes' if TG_CHAT else 'NO'}")
+    try:
+        test_ai()
+    except AIDown as e:
+        tell(f"Bot problem: {e}")
+        return
     for m in MARKETS:
-        print(f"--- {m} ---")
+        log(f"--- {m} ---")
         try:
             tell(run_market(m))
+        except AIDown as e:
+            tell(f"{m}: report stopped. {e}")
+            return
         except Exception as e:
             tell(f"{m}: report failed - {e.__class__.__name__}: {str(e)[:200]}")
+    log(f"Done in {(time.time() - START) / 60:.1f} minutes")
 
 
 if __name__ == "__main__":
