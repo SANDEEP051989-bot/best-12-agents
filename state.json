@@ -1,6 +1,42 @@
 {
  "weights": {},
- "memory": {},
+ "memory": {
+  "BTC:trend": [
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75578.51
+   }
+  ],
+  "BTC:daily_view": [
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75578.51
+   }
+  ],
+  "BTC:news": [
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75578.51
+   }
+  ],
+  "BTC:macro": [
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75578.51
+   }
+  ],
+  "BTC:special": [
+   {
+    "said": "BUY",
+    "right": false,
+    "price": 75578.51
+   }
+  ]
+ },
  "votes_log": [
   {
    "time": 1793975096.181017,
@@ -20,7 +56,8 @@
     "bull": "WAIT",
     "bear": "WAIT",
     "time_machine": "WAIT"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793975141.12418,
@@ -396,10 +433,73 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1793991329.8769827,
+   "market": "BTC",
+   "price": 75670.21,
+   "atr": 504.9431,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "levels": "WAIT",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1793991345.937202,
+   "market": "GOLD",
+   "price": 4078.6,
+   "atr": 16.6357,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "BUY",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "BUY",
+    "macro": "BUY",
+    "special": "SELL",
+    "levels": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1793991349.165519,
+   "market": "OIL",
+   "price": 90.06,
+   "atr": 0.9864,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "news": "SELL",
+    "special": "BUY",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [],
  "last_oi": {
-  "okx": 35074.0
+  "okx": 34921.0
  }
 }
