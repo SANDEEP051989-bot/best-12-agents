@@ -130,10 +130,75 @@
    "inspector_changes": {
     "volatility": "SELL"
    }
+  },
+  {
+   "time": 1793979069.1598725,
+   "market": "BTC",
+   "price": 75509.07,
+   "atr": 464.6278,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "levels": "WAIT",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1793979078.1696217,
+   "market": "GOLD",
+   "price": 4060.5,
+   "atr": 17.6142,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "SELL",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "BUY",
+    "macro": "BUY",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {
+    "mood": "BUY"
+   }
+  },
+  {
+   "time": 1793979081.1874783,
+   "market": "OIL",
+   "price": 90.34,
+   "atr": 0.9879,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "BUY",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "SELL",
+    "news": "WAIT",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [],
  "last_oi": {
-  "okx": 35233.0
+  "okx": 35178.0
  }
 }
