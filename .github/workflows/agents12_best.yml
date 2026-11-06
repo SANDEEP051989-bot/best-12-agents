@@ -1,0 +1,26 @@
+name: Best 12 AI Agents (BTC + Gold)
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ccxt pandas google-genai requests
+      - run: python agents12_best.py
+        env:
+          RUN_ONCE: "1"
+          EXCHANGE: kraken
+          MARKETS: "BTC,GOLD"
+          GEMINI_MODEL: gemini-flash-lite-latest
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
