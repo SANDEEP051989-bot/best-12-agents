@@ -278,6 +278,8 @@ def boss(name, votes, state):
     buy = [a for a, v in votes.items() if v and v.get("vote") == "BUY"]
     sell = [a for a, v in votes.items() if v and v.get("vote") == "SELL"]
     side, team = ("BUY", buy) if len(buy) >= len(sell) else ("SELL", sell)
+    if not buy and not sell:
+        side = "WAIT"
     w = lambda a: state["weights"].get(f"{name}:{a}", 1.0)
     score = sum(w(a) for a in team)
     conf = sum(votes[a].get("confidence", 0) * w(a) for a in team) / max(score, 0.01)
@@ -348,8 +350,22 @@ def main():
             votes["time_machine"] = time_machine(h1)
             b = boss(name, votes, state)
             plan = make_plan(b["side"], facts["hourly"])
-            line = (f"\n{name} {facts['hourly']['price']} | {b['side']} "
-                    f"{b['agree']}/{b['of']} agree, conf {b['weighted_conf']}")
+            count = {"BUY": 0, "SELL": 0, "WAIT": 0}
+            for v in votes.values():
+                count[(v or {}).get("vote", "WAIT") if (v or {}).get("vote") in count else "WAIT"] += 1
+            line = (f"\n===== {name} {facts['hourly']['price']} =====\n"
+                    f"BUY {count['BUY']} | SELL {count['SELL']} | WAIT {count['WAIT']} "
+                    f"(out of {b['of']} agents)\n"
+                    f"Leading side: {b['side']}, {b['agree']} agree, conf {b['weighted_conf']}")
+            line += "\nWhat each agent said:"
+            for agent_name, v in votes.items():
+                v = v or {}
+                reason = str(v.get("reason", ""))[:90]
+                line += (f"\n- {agent_name}: {v.get('vote', 'WAIT')} "
+                         f"({v.get('confidence', '-')}/10) {reason}")
+            skipped = [a for a in list(AGENTS) + ["bull", "bear"] if a not in votes]
+            if skipped:
+                line += f"\n- no answer (Gemini busy): {', '.join(skipped)}"
             taken = False
             if b["go"] and loss > -MAX_OPEN_LOSS_PCT:
                 risk = risk_manager(name, facts, plan)
