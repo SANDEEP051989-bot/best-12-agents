@@ -8,19 +8,21 @@ on:
 jobs:
   report:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install ccxt pandas google-genai requests
-      - run: python agents12_best.py
+      - run: python -u agents12_best.py
         env:
+          PYTHONUNBUFFERED: "1"
           RUN_ONCE: "1"
           EXCHANGE: kraken
           MARKETS: "BTC,GOLD"
           GEMINI_MODEL: gemini-flash-lite-latest
+          MAX_RUN_MINUTES: "35"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
