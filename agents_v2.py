@@ -1,4 +1,4 @@
-# agents_v2.py  -  version 5  "Veteran Desk"
+# agents_v2.py  -  version 6  "Veteran Desk"
 # 12 AI agents, each thinking like a 30-year veteran trader, for BTC, Gold and US Oil.
 # Brain: Gemini.  Reports: Telegram.  Server: GitHub Actions.
 #
@@ -24,6 +24,18 @@
 #  5. The inspector must use the exact short member names, so no change is silently lost.
 #  6. The inspector only runs when at least 5 members already agree on one side (saves Gemini questions).
 #
+# New in version 6 (from the 16 live screenshots of 6 Nov):
+#  1. CODE RULES decide the 5 chart members (trend, momentum, levels, volatility, big picture):
+#     a vote against the rule becomes WAIT, a WAIT where the rule is clear becomes the rule's vote.
+#  2. The AI inspector now only reviews the 6 judgement members (news, mood, macro, specialist, bull, bear)
+#     and may only REMOVE one bad vote (make it WAIT) with proof from that member's own data. It can no longer
+#     cancel good votes or create new ones, so it cannot block a good trade or contradict itself.
+#  3. Faster market phase: price vs EMA200 and a run of falling/rising weekly closes now count too.
+#  4. Bitcoin specialist: price down + open interest up (new shorts) can no longer give a BUY.
+#  5. Weak levels (a single hourly swing) no longer block a trade; only strong levels count for room.
+#  6. Time machine: one extra rule and fairer test sizes, so it votes more often.
+#  7. More oil news sources.
+#
 # Paper trading only. Not financial advice.
 
 import os, json, time, datetime as dt
@@ -38,7 +50,7 @@ TG_CHAT = os.environ["TELEGRAM_CHAT_ID"]
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 MARKETS = {"BTC": "BTC-USD", "GOLD": "GC=F", "OIL": "CL=F"}
-NEWS_TICKERS = {"BTC": ["BTC-USD", "IBIT", "MSTR"], "GOLD": ["GC=F", "GLD", "IAU", "NEM"], "OIL": ["CL=F", "USO", "XLE"]}
+NEWS_TICKERS = {"BTC": ["BTC-USD", "IBIT", "MSTR"], "GOLD": ["GC=F", "GLD", "IAU", "NEM"], "OIL": ["CL=F", "BZ=F", "USO", "XLE", "XOM"]}
 ROUND_STEP = {"BTC": 5000, "GOLD": 100, "OIL": 5}     # only big round numbers count as levels
 
 # ----- trade rule (change these numbers if you want more or fewer trades) -----
@@ -317,10 +329,17 @@ def market_phase(h1, d1):
     de50, de200 = ema(dc, 50), ema(dc, 200)
     weekly = dc.resample("W").last().dropna()
     score = 0
-    score += 1 if dc.iloc[-1] > de50.iloc[-1] else -1
-    score += 1 if de50.iloc[-1] > de200.iloc[-1] else -1
+    score += 1 if dc.iloc[-1] > de50.iloc[-1] else -1            # price vs 50-day line
+    score += 1 if dc.iloc[-1] > de200.iloc[-1] else -1           # price vs 200-day line
+    score += 1 if de50.iloc[-1] > de200.iloc[-1] else -1         # 50-day line vs 200-day line
     if len(weekly) >= 5:
-        score += 1 if weekly.iloc[-1] > weekly.iloc[-5] else -1
+        score += 1 if weekly.iloc[-1] > weekly.iloc[-5] else -1  # 4-week direction
+    if len(weekly) >= 7:
+        steps = np.sign(np.diff(weekly.iloc[-7:].values))         # last 6 weekly moves
+        if (steps < 0).sum() >= 4:
+            score -= 1                                            # a run of falling weeks
+        elif (steps > 0).sum() >= 4:
+            score += 1                                            # a run of rising weeks
     daily = "up" if score >= 2 else "down" if score <= -2 else "mixed"
     if e20.iloc[-1] > e50.iloc[-1] > e200.iloc[-1]:
         hourly = "up"
@@ -342,7 +361,7 @@ def market_phase(h1, d1):
     else:
         regime = "ranging"
     words = {"up": "UP-trend", "down": "DOWN-trend", "mixed": "no clear trend"}
-    text = (f"Daily: {words[daily]} (score {score:+d} of 3). Hourly: {hourly}. "
+    text = (f"Daily: {words[daily]} (score {score:+d} of 5). Hourly: {hourly}. "
             f"Regime: {regime} (daily ADX {adx_d:.0f}, hourly ADX {adx_h:.0f}).")
     return {"daily": daily, "hourly": hourly, "regime": regime, "score": score,
             "adx_daily": num(adx_d, 1), "adx_hourly": num(adx_h, 1), "text": text}
@@ -380,16 +399,23 @@ def key_levels(name, h1, d1, price, a):
             z["n"] += 1
         else:
             zones.append({"price": p, "sources": {s}, "n": 1})
+    minor_only = {"hourly swing high", "hourly swing low", "pivot R1", "pivot S1"}
+    for z in zones:     # strong = 2+ levels together, or one important level (daily, previous day, 52-week, round...)
+        z["strong"] = z["n"] >= 2 or bool(z["sources"] - minor_only)
     at_level = [z for z in zones if abs(z["price"] - price) < MIN_LEVEL_GAP_ATR * a]
     above = sorted([z for z in zones if z["price"] - price >= MIN_LEVEL_GAP_ATR * a], key=lambda z: z["price"])
     below = sorted([z for z in zones if price - z["price"] >= MIN_LEVEL_GAP_ATR * a], key=lambda z: -z["price"])
-    fmt = lambda z: {"price": num(z["price"]), "type": ", ".join(sorted(z["sources"])), "strength": z["n"]}
-    room_up = (above[0]["price"] - price) / a if above else 99.0
-    room_down = (price - below[0]["price"]) / a if below else 99.0
+    strong_above = [z for z in above if z["strong"]]
+    strong_below = [z for z in below if z["strong"]]
+    fmt = lambda z: {"price": num(z["price"]), "type": ", ".join(sorted(z["sources"])), "strength": z["n"],
+                     "strong": z["strong"]}
+    room_up = (strong_above[0]["price"] - price) / a if strong_above else 99.0
+    room_down = (price - strong_below[0]["price"]) / a if strong_below else 99.0
     return {
         "price_is_at_level": [fmt(z) for z in at_level],
-        "resistances_above": [fmt(z) for z in above[:3]],
-        "supports_below": [fmt(z) for z in below[:3]],
+        "strong_resistances_above": [fmt(z) for z in strong_above[:3]],
+        "strong_supports_below": [fmt(z) for z in strong_below[:3]],
+        "weak_levels_nearby (do not block a trade)": [fmt(z) for z in (above + below) if not z["strong"]][:4],
         "room_up_to_next_resistance_in_ATR": num(min(room_up, 99), 2),
         "room_down_to_next_support_in_ATR": num(min(room_down, 99), 2),
         "buy_has_room": bool(room_up >= TARGET1_ATR),
@@ -476,13 +502,16 @@ def build_facts(name, h1, d1, macro, extra, news, phase):
                "rsi_hourly": num(r_h.iloc[-1], 1), "rsi_daily": num(r_d.iloc[-1], 1),
                "room_up_in_ATR": levels["room_up_to_next_resistance_in_ATR"],
                "room_down_in_ATR": levels["room_down_to_next_support_in_ATR"],
-               "nearest_resistance": (levels["resistances_above"] or [{}])[0].get("price"),
-               "nearest_support": (levels["supports_below"] or [{}])[0].get("price"),
+               "nearest_strong_resistance": (levels["strong_resistances_above"] or [{}])[0].get("price"),
+               "nearest_strong_support": (levels["strong_supports_below"] or [{}])[0].get("price"),
                "change_5d_pct": pct(dc.iloc[-1], dc.iloc[-6]) if len(dc) > 6 else None}
     raw = {"price": price, "atr": a, "rsi_h": float(r_h.iloc[-1]), "rsi_h_6": float(r_h.iloc[-7]),
            "hist_rising": bool(hist_h.iloc[-1] > hist_h.iloc[-4]), "hist_h": float(hist_h.iloc[-1]),
            "room_up": levels["room_up_to_next_resistance_in_ATR"], "room_down": levels["room_down_to_next_support_in_ATR"],
-           "atr_pct": percentile_rank(a_h1) or 50, "range_vs_atr": (range_24h / a_d1.iloc[-1]) if a_d1.iloc[-1] else 1}
+           "atr_pct": percentile_rank(a_h1) or 50, "range_vs_atr": (range_24h / a_d1.iloc[-1]) if a_d1.iloc[-1] else 1,
+           "chg24": pct(price, c.iloc[-25]) if len(c) > 25 else 0,
+           "oi_chg": (extra.get("derivatives") or {}).get("open_interest_change_since_last_run_pct"),
+           "funding": (extra.get("derivatives") or {}).get("funding_rate_pct_8h")}
     return facts, summary, raw
 
 
@@ -569,7 +598,8 @@ Your rules - they are equal for both sides:
 
     "levels": """You are a price-action trader with 30 years of experience, starting on the trading floor. You trade support,
 resistance and institutional zones (previous day high and low, pivots, big round numbers, volume point of control,
-52-week extremes, daily EMA200). The code has already removed tiny levels and measured the room in ATR for you.
+52-week extremes, daily EMA200). The code has already removed tiny levels, marked which levels are STRONG,
+and measured the room to the next STRONG level in ATR for you. Weak levels (a single hourly swing) do not block a trade.
 Your rules:
 - BUY needs room UP of at least 2 ATR (buy_has_room true). SELL needs room DOWN of at least 2 ATR (sell_has_room true).
 - Room ABOVE does not matter for a SELL, and room BELOW does not matter for a BUY.
@@ -680,39 +710,38 @@ Reason: 1-2 short simple-English sentences (max 45 words).
 Reply ONLY as JSON: {{"final": "TAKE" or "SKIP", "reason": "..."}}"""
 
 INSPECTOR_PROMPT = """You are the desk's QUALITY INSPECTOR: 30 years as head of trading performance review at a large bank.
-You do not trade. You check the work of the desk members on {name} before the vote is counted.
+You do not trade. The chart members are already checked by fixed code rules. You check the JUDGEMENT members on {name}:
+news, mood, macro, special (market specialist), bull and bear.
 
 Shared facts (measured by code, always correct):
 {facts}
 
-Each member's vote, its reason, and the exact data THAT member was given:
+The judgement members' votes, reasons, and the exact data EACH was given:
 {members}
 
-The rules each member must follow:
-- trend: vote the DAILY trend direction; never BUY a clear down-trend or SELL a clear up-trend.
-- momentum: RSI below 50 and falling + MACD histogram falling = SELL; RSI above 50 and rising + histogram rising = BUY.
-- levels: BUY needs room UP of 2 ATR or more, SELL needs room DOWN of 2 ATR or more; room in the other direction
-  does not matter. WAIT only if neither side has room.
-- volatility, daily_view: vote the daily trend unless volatility is extreme.
-- macro: judge the dollar, yields, stocks and VIX for THIS market (see its data).
-- news: judge only the headlines it was given. mood: a contrarian vote at EXTREME fear or greed is allowed and correct.
-- bull: BUY or WAIT only. bear: SELL or WAIT only; a short needs room DOWN, not up.
-- Everyone: WAIT only when the evidence is truly balanced; "uncertain" or "no confirmation" is not a reason.
+What each must do:
+- news: judge only its headlines. Price falling on bearish headlines = SELL is correct; no relevant headlines = WAIT.
+- mood: contrarian at EXTREME fear or greed; otherwise vote with the daily trend (for Gold, rising fear is good
+  unless the daily trend is down).
+- macro: judge the dollar, yields, stocks and VIX for THIS market.
+- special: follow its own market rules (Bitcoin: price down + open interest up = new shorts = bearish).
+- bull: BUY or WAIT only, needs room UP. bear: SELL or WAIT only, needs room DOWN.
 
-For each member check: (1) do the numbers in its reason match ITS data? (2) did it follow its rule? (3) did it use the
-shared MARKET_PHASE? (4) did it wait without a real reason?
-Report only REAL mistakes. For news and mood, report a mistake ONLY if you can quote the exact number or headline
-from their data that proves it. Every problem must include that proof in "evidence".
+Your only power: you may REMOVE a vote (turn a BUY or SELL into WAIT) when the member clearly broke its own rule or its
+reason contradicts ITS OWN data. You may NOT remove a vote just because the shared market phase is mixed - news, macro
+and special judge their own data, not the chart. You may not create a BUY or SELL.
+Remove at most the single worst vote. Quote the exact number or headline from that member's data as proof.
 Use ONLY these member names: {names}
-Reply ONLY as JSON: {{"problems": [{{"agent": "<one of the names above>", "problem": "<one short sentence>",
-"evidence": "<the exact number or headline from the data>", "corrected_vote": "BUY" or "SELL" or "WAIT"}}],
+Reply ONLY as JSON: {{"remove": {{"agent": "<one of the names above, or none>", "problem": "<one short sentence>",
+"evidence": "<exact number or headline from its data>"}}, "warnings": ["<short note about any other doubtful vote>"],
 "overall": "<one short sentence about the desk's work>"}}"""
 
-MAX_INSPECTOR_FIXES = 3     # the inspector may correct at most 3 votes per market
+MAX_INSPECTOR_FIXES = 1     # the inspector may remove at most 1 vote per market
 INSPECT_MIN_SIDE = 5        # the inspector only runs when at least this many agree on one side
 MAX_CHANGED_IN_TRADE = 1    # a trade may rest on at most this many inspector-changed votes
 
 ANALYSTS = ["trend", "momentum", "levels", "volatility", "daily_view", "news", "mood", "macro", "special"]
+JUDGEMENT = ["news", "mood", "macro", "special", "bull", "bear"]
 ALL_VOTERS = ANALYSTS + ["bull", "bear", "time_machine"]
 
 
@@ -795,68 +824,83 @@ def debate_prompts(name, summary, votes):
 # =====================================================================
 # rule backup (used only when Gemini gave no answer even after a retry)
 # =====================================================================
-def rule_backup(agent, name, phase, raw, macro):
-    d = phase["daily"]
-    trend_side = "BUY" if d == "up" else "SELL" if d == "down" else None
-    v, why = "WAIT", "no clear rule signal"
-    if agent == "trend" and trend_side and phase["hourly"] not in (("down", "turning down") if d == "up" else ("up", "turning up")):
-        v, why = trend_side, f"daily {d}-trend and hourly {phase['hourly']}"
-    elif agent == "momentum":
+def trend_side(phase):
+    if phase["daily"] in ("up", "down"):
+        return "BUY" if phase["daily"] == "up" else "SELL"
+    if phase["hourly"] in ("up", "down"):
+        return "BUY" if phase["hourly"] == "up" else "SELL"
+    return None
+
+
+def code_rule(agent, phase, raw):
+    """The fixed rule for each chart member. Returns (vote, why) or (None, why) when the rule gives no clear answer."""
+    d_side = "BUY" if phase["daily"] == "up" else "SELL" if phase["daily"] == "down" else None
+    t_side = trend_side(phase)
+    if agent == "trend":
+        return (t_side, f"daily {phase['daily']}, hourly {phase['hourly']}") if t_side else (None, "no clear trend")
+    if agent == "momentum":
         if raw["rsi_h"] < 50 and raw["rsi_h"] < raw["rsi_h_6"] and not raw["hist_rising"]:
-            v, why = "SELL", f"RSI {raw['rsi_h']:.1f} falling, MACD histogram falling"
-        elif raw["rsi_h"] > 50 and raw["rsi_h"] > raw["rsi_h_6"] and raw["hist_rising"]:
-            v, why = "BUY", f"RSI {raw['rsi_h']:.1f} rising, MACD histogram rising"
-    elif agent == "levels":
-        if trend_side == "BUY" and raw["room_up"] >= TARGET1_ATR:
-            v, why = "BUY", f"up-trend with {raw['room_up']} ATR room up"
-        elif trend_side == "SELL" and raw["room_down"] >= TARGET1_ATR:
-            v, why = "SELL", f"down-trend with {raw['room_down']} ATR room down"
-    elif agent in ("volatility", "daily_view") and trend_side:
-        if not (agent == "volatility" and raw["atr_pct"] > 95 and raw["range_vs_atr"] > 2.5):
-            v, why = trend_side, f"daily {d}-trend"
-    elif agent == "macro":
+            return "SELL", f"RSI {raw['rsi_h']:.1f} below 50 and falling, MACD histogram falling"
+        if raw["rsi_h"] > 50 and raw["rsi_h"] > raw["rsi_h_6"] and raw["hist_rising"]:
+            return "BUY", f"RSI {raw['rsi_h']:.1f} above 50 and rising, MACD histogram rising"
+        return None, "momentum mixed"
+    if agent == "levels":
+        if t_side == "BUY" and raw["room_up"] >= TARGET1_ATR:
+            return "BUY", f"trend up with {raw['room_up']} ATR room up to a strong level"
+        if t_side == "SELL" and raw["room_down"] >= TARGET1_ATR:
+            return "SELL", f"trend down with {raw['room_down']} ATR room down to a strong level"
+        if raw["room_up"] < TARGET1_ATR and raw["room_down"] < TARGET1_ATR:
+            return "WAIT", f"no room either way (up {raw['room_up']}, down {raw['room_down']} ATR)"
+        return None, "room only against the trend"
+    if agent == "volatility":
+        if raw["atr_pct"] > 95 and raw["range_vs_atr"] > 2.5:
+            return "WAIT", "volatility extreme"
+        return (d_side, f"daily {phase['daily']}-trend") if d_side else (None, "no daily trend")
+    if agent == "daily_view":
+        return (d_side, f"daily {phase['daily']}-trend (score {phase['score']:+d})") if d_side else (None, "no daily trend")
+    return None, ""
+
+
+def rule_backup(agent, name, phase, raw, macro):
+    v, why = code_rule(agent, phase, raw)
+    if agent == "macro":
         dxy = (macro.get("dollar_index") or {}).get("change_5d_pct") or 0
         spx = (macro.get("sp500") or {}).get("change_5d_pct") or 0
         yld = (macro.get("us10y_yield") or {}).get("change_5d_pct") or 0
         score = (-1 if dxy > 0.3 else 1 if dxy < -0.3 else 0) + \
                 ((-1 if yld > 1.5 else 1 if yld < -1.5 else 0) if name == "GOLD" else (1 if spx > 0.5 else -1 if spx < -0.5 else 0))
-        if score:
-            v, why = ("BUY" if score > 0 else "SELL"), f"dollar {dxy:+.2f}%, stocks {spx:+.2f}%, yields {yld:+.2f}% over 5 days"
-    return {"vote": v, "confidence": 5 if v != "WAIT" else 3,
+        v = ("BUY" if score > 0 else "SELL") if score else None
+        why = f"dollar {dxy:+.2f}%, stocks {spx:+.2f}%, yields {yld:+.2f}% over 5 days"
+    v = v or "WAIT"
+    return {"vote": v, "orig": v, "confidence": 5 if v != "WAIT" else 3,
             "reason": f"[rule backup - Gemini did not answer] {why}.", "wrong_if": "", "backup": True}
 
 
 # =====================================================================
 # quality check: catches votes that contradict the data
 # =====================================================================
-def quality_check(votes, phase, raw):
+def quality_check(name, votes, phase, raw):
+    """The code has the final word on the 5 chart members and on clear Bitcoin futures signals."""
     flags = []
-    strong_down = phase["daily"] == "down" and phase["hourly"] in ("down", "turning down")
-    strong_up = phase["daily"] == "up" and phase["hourly"] in ("up", "turning up")
-    t = votes.get("trend")
-    if t and ((strong_down and t["vote"] == "BUY") or (strong_up and t["vote"] == "SELL")):
-        flags.append(f"Trend voted {t['vote']} against a clear {phase['daily']}-trend -> overruled to WAIT")
-        t["vote"], t["reason"] = "WAIT", "[overruled by quality check] " + t["reason"]
-    lv = votes.get("levels")
-    if lv:
-        if lv["vote"] == "BUY" and raw["room_up"] < 1.0:
-            flags.append(f"Levels voted BUY with only {raw['room_up']} ATR room up -> overruled to WAIT")
-            lv["vote"], lv["reason"] = "WAIT", "[overruled by quality check] " + lv["reason"]
-        elif lv["vote"] == "SELL" and raw["room_down"] < 1.0:
-            flags.append(f"Levels voted SELL with only {raw['room_down']} ATR room down -> overruled to WAIT")
-            lv["vote"], lv["reason"] = "WAIT", "[overruled by quality check] " + lv["reason"]
-    m = votes.get("momentum")
-    if m:
-        falling = raw["rsi_h"] < 45 and raw["rsi_h"] < raw["rsi_h_6"] and not raw["hist_rising"]
-        rising = raw["rsi_h"] > 55 and raw["rsi_h"] > raw["rsi_h_6"] and raw["hist_rising"]
-        if (falling and m["vote"] == "BUY") or (rising and m["vote"] == "SELL"):
-            flags.append(f"Momentum voted {m['vote']} against its own rule (RSI {raw['rsi_h']:.1f}) -> overruled to WAIT")
-            m["vote"], m["reason"] = "WAIT", "[overruled by quality check] " + m["reason"]
-        elif (falling or rising) and m["vote"] == "WAIT":
-            flags.append(f"Momentum said WAIT although its rule gives {'SELL' if falling else 'BUY'}")
-    b = votes.get("bear")
-    if b and b["vote"] == "WAIT" and "resistance" in b["reason"].lower() and raw["room_down"] >= TARGET1_ATR:
-        flags.append("Bear waited because of resistance above, but a short needs room DOWN, and there is enough")
+    for agent in ("trend", "momentum", "levels", "volatility", "daily_view"):
+        v = votes.get(agent)
+        if not v or v.get("backup"):
+            continue
+        rule, why = code_rule(agent, phase, raw)
+        if rule is None or v["vote"] == rule:
+            continue
+        old, new = v["vote"], rule                       # the fixed rule decides chart members
+        v["vote"] = new
+        v["confidence"] = 5 if new != "WAIT" else 3
+        v["reason"] = f"[code rule changed {old} to {new}: {why}] " + v["reason"]
+        flags.append(f"{LABELS[agent]} {old} -> {new} ({why})")
+    sp = votes.get("special")
+    if name == "BTC" and sp and sp["vote"] == "BUY" and (raw.get("chg24") or 0) < 0 and (raw.get("oi_chg") or 0) > 0 \
+            and (raw.get("funding") or 0) >= 0:
+        sp["vote"], sp["confidence"] = "WAIT", 3
+        sp["reason"] = (f"[code rule changed BUY to WAIT: price down {raw['chg24']}% with open interest up "
+                        f"{raw['oi_chg']}% = new shorts, which is bearish] " + sp["reason"])
+        flags.append("Market specialist BUY -> WAIT (price down + open interest up = new shorts)")
     return flags
 
 
@@ -873,55 +917,51 @@ def norm_agent_name(text):
 
 
 def ai_inspector(name, votes, phase, raw, summary, facts):
-    """A Gemini quality inspector reviews every vote and corrects up to 3 real mistakes."""
+    """Gemini inspector: reviews the 6 judgement members; may only remove ONE bad vote, with proof from its own data."""
     count = {"BUY": 0, "SELL": 0}
     for v in votes.values():
         if v["vote"] in count:
             count[v["vote"]] += 1
     if max(count.values()) < INSPECT_MIN_SIDE:
-        return [], f"not needed (no side has {INSPECT_MIN_SIDE} votes yet)"
+        return [], [], f"not needed (no side has {INSPECT_MIN_SIDE} votes yet)"
     if not time_left():
-        return [], "skipped (time up)"
-    shared = {**summary, "rsi_hourly_6_bars_ago": round(raw["rsi_h_6"], 1), "macd_histogram_rising": raw["hist_rising"],
-              "buy_has_room_2ATR": raw["room_up"] >= TARGET1_ATR, "sell_has_room_2ATR": raw["room_down"] >= TARGET1_ATR}
+        return [], [], "skipped (time up)"
+    shared = {**summary, "buy_has_room_2ATR": raw["room_up"] >= TARGET1_ATR, "sell_has_room_2ATR": raw["room_down"] >= TARGET1_ATR}
     members = {}
-    for a, v in votes.items():
-        if a not in ANALYSTS + ["bull", "bear"] or v.get("backup"):
+    for a in JUDGEMENT:
+        v = votes.get(a)
+        if not v or v.get("backup"):
             continue
-        data_for = facts.get(a, {}) if a in ANALYSTS else {"desk_summary": "see shared facts"}
+        data_for = facts.get(a, {}) if a in ANALYSTS else {"see": "shared facts"}
         data_for = {k: val for k, val in data_for.items() if k not in ("market", "MARKET_PHASE (same for whole desk)")}
         members[a] = {"vote": v["vote"], "confidence": v["confidence"], "reason": v["reason"], "its_data": data_for}
     if not members:
-        return [], "nothing to check"
+        return [], [], "nothing to check"
     ans = ask_gemini(INSPECTOR_PROMPT.format(name=name, facts=jdump(shared), members=jdump(members),
                                              names=", ".join(members)))
     if not isinstance(ans, dict):
-        return [], "did not answer"
-    fixes = []
-    for p in (ans.get("problems") or [])[:10]:
-        if len(fixes) >= MAX_INSPECTOR_FIXES or not isinstance(p, dict):
-            break
-        agent = norm_agent_name(p.get("agent", ""))
-        new = str(p.get("corrected_vote", "")).upper().strip()
-        evidence = str(p.get("evidence", "")).strip()
-        if agent not in members or new not in ("BUY", "SELL", "WAIT"):
-            continue
-        if (agent == "bull" and new == "SELL") or (agent == "bear" and new == "BUY"):
-            continue
-        if agent in ("news", "mood") and (len(evidence) < 8 or not any(ch.isdigit() for ch in evidence)
-                                          and evidence.lower() not in jdump(members[agent]["its_data"]).lower()):
-            continue                                   # no clear proof: leave News and Mood alone
-        old = votes[agent]["vote"]
-        if new == old:
-            continue
-        problem = str(p.get("problem", "")).strip()
-        votes[agent]["vote"] = new
-        votes[agent]["inspected"] = True
-        votes[agent]["inspector_vote"] = new          # kept even if the code guard later overrules it
-        votes[agent]["confidence"] = min(votes[agent]["confidence"], 6) if new != "WAIT" else 3
-        votes[agent]["reason"] = f"[AI inspector changed {old} to {new}: {problem}] " + votes[agent]["reason"]
-        fixes.append(f"{LABELS.get(agent, agent)} {old} -> {new}: {problem}" + (f" (proof: {evidence})" if evidence else ""))
-    return fixes, str(ans.get("overall", "")).strip()
+        return [], [], "did not answer"
+    fixes, notes = [], [str(w).strip() for w in (ans.get("warnings") or []) if str(w).strip()][:3]
+    rm = ans.get("remove") or {}
+    if isinstance(rm, list):
+        rm = rm[0] if rm and isinstance(rm[0], dict) else {}
+    agent = norm_agent_name(rm.get("agent", "")) if isinstance(rm, dict) else ""
+    if agent in members and votes[agent]["vote"] in ("BUY", "SELL"):
+        problem = str(rm.get("problem", "")).strip()
+        evidence = str(rm.get("evidence", "")).strip()
+        own = jdump(members[agent]["its_data"]).lower() + " " + members[agent]["reason"].lower()
+        has_proof = len(evidence) >= 4 and (any(ch.isdigit() for ch in evidence) or evidence.lower()[:25] in own)
+        phase_only = agent in ("news", "macro", "special") and any(w in (problem + evidence).lower()
+                                                                     for w in ("phase", "mixed", "no clear trend"))
+        if has_proof and not phase_only:
+            old = votes[agent]["vote"]
+            votes[agent].update(vote="WAIT", confidence=3, inspected=True, removed_side=old)
+            votes[agent]["reason"] = f"[AI inspector removed {old}: {problem}] " + votes[agent]["reason"]
+            fixes.append(f"{LABELS.get(agent, agent)} {old} -> WAIT: {problem} (proof: {evidence})")
+        elif problem:
+            notes.append(f"{LABELS.get(agent, agent)}: {problem} (not applied: "
+                         f"{'reason was the shared phase' if phase_only else 'no proof from its own data'})")
+    return fixes, notes, str(ans.get("overall", "")).strip()
 
 
 # =====================================================================
@@ -969,11 +1009,17 @@ def update_report_card(state, data):
         if "open" in results.values() and time.time() - rec["time"] < (MAX_HOLD_BARS + 24) * 3600:
             continue
         rec["checked"] = True
-        judged = list(rec["votes"].items()) + [("inspector", v) for v in rec.get("inspector_changes", {}).values()]
-        for agent, said in judged:
-            if said not in ("BUY", "SELL") or results[said] not in ("win", "loss"):
+        judged = [(a, said, said) for a, said in rec["votes"].items()] + \
+                 [("inspector", "REMOVED " + side, side) for side in rec.get("inspector_removed", {}).values()]
+        for agent, said, side in judged:
+            if side not in ("BUY", "SELL") or results[side] not in ("win", "loss"):
                 continue
             key = f"{rec['market']}:{agent}"
+            if agent == "inspector":                       # the inspector was right if the removed vote would have lost
+                mem = state["memory"].setdefault(key, [])
+                mem.append({"said": said, "right": results[side] == "loss", "price": rec["price"]})
+                state["memory"][key] = mem[-20:]
+                continue
             mem = state["memory"].setdefault(key, [])
             mem.append({"said": said, "right": results[said] == "win", "price": rec["price"]})
             state["memory"][key] = mem[-20:]
@@ -1031,6 +1077,8 @@ def rule_signals(h1):
         "dip in uptrend": ((r < 32) & (c > e200), (r > 68) & (c < e200)),
         "MACD cross with trend": ((m > s) & (m.shift(1) <= s.shift(1)) & (c > e50),
                                   (m < s) & (m.shift(1) >= s.shift(1)) & (c < e50)),
+        "RSI 50 cross with trend": ((r > 50) & (r.shift(1) <= 50) & (e20 > e50) & (c > e200),
+                                    (r < 50) & (r.shift(1) >= 50) & (e20 < e50) & (c < e200)),
     }
 
 
@@ -1090,7 +1138,7 @@ def time_machine(h1):
         old = stats(simulate(h1, buy, sell, a, 200, split))
         new_res = simulate(h1, buy, sell, a, split, None)
         new = stats(new_res)
-        proven = old["trades"] >= 10 and old["avg_r"] > 0 and new["trades"] >= 5 and new["avg_r"] > 0
+        proven = old["trades"] >= 8 and old["avg_r"] > 0.05 and new["trades"] >= 4 and new["avg_r"] > 0
         report[name] = {"older": old, "newer": new, "proven": proven}
         if not proven:
             continue
@@ -1288,9 +1336,9 @@ def main():
                 if agent not in votes and agent not in ("news", "mood", "special"):
                     votes[agent] = rule_backup(agent, name, phase, raw, macro)
             votes["time_machine"], _ = time_machine(w["h1"])
-            ai_fixes, ai_overall = ai_inspector(name, votes, phase, raw, summary, w["facts"])   # AI checks first
+            flags = quality_check(name, votes, phase, raw)                                   # code rules first
+            ai_fixes, ai_notes, ai_overall = ai_inspector(name, votes, phase, raw, summary, w["facts"])
             time.sleep(PAUSE_BETWEEN_CALLS)
-            flags = quality_check(votes, phase, raw)                                            # code has the final word
 
             b = boss(name, votes, state)
             price, a_now = raw["price"], raw["atr"]
@@ -1347,8 +1395,9 @@ def main():
                     block.append(line)
                 else:
                     block.append(f"- {LABELS[agent]}: no answer (Gemini busy)")
-            block.append("Code quality check: " + ("; ".join(flags) if flags else "all votes match the data."))
-            block.append("AI inspector: " + ("; ".join(ai_fixes) if ai_fixes else "no corrections.")
+            block.append("Code rules: " + ("; ".join(flags) if flags else "all chart votes follow their rules."))
+            block.append("AI inspector: " + ("; ".join(ai_fixes) if ai_fixes else "no vote removed.")
+                         + (f" Warnings: {'; '.join(ai_notes)}." if ai_notes else "")
                          + (f" Overall: {ai_overall}" if ai_overall else ""))
             if name == "BTC" and not w["extra"].get("derivatives", {}).get("source"):
                 block.append("Note: BTC futures data was not available this hour.")
@@ -1357,7 +1406,7 @@ def main():
             state["votes_log"].append({"time": time.time(), "market": name, "price": num(price),
                                        "atr": num(a_now, 4),
                                        "votes": {a: v.get("orig", v["vote"]) for a, v in votes.items() if not v.get("backup")},
-                                       "inspector_changes": {a: v["inspector_vote"] for a, v in votes.items() if v.get("inspected")}})
+                                       "inspector_removed": {a: v["removed_side"] for a, v in votes.items() if v.get("removed_side")}})
         except Exception as e:
             log(f"{name} error: {e}")
             report.append(f"\n===== {name} =====\nError: {e}")
