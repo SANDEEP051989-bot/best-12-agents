@@ -1,0 +1,36 @@
+{
+ "signals": [
+  {
+   "time": 1793970992.3750865,
+   "market": "BTC",
+   "price": 75777.3,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "time": 1793971013.7687283,
+   "market": "GOLD",
+   "price": 4068.9,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "time": 1793971034.9401498,
+   "market": "OIL",
+   "price": 91.03,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "time_machine": "WAIT"
+   }
+  }
+ ],
+ "weights": {},
+ "memory": {}
+}
