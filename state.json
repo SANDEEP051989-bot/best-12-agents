@@ -184,6 +184,68 @@
     "bear": "SELL",
     "time_machine": "WAIT"
    }
+  },
+  {
+   "time": 1793974589.3127797,
+   "market": "BTC",
+   "price": 75485.59,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "BUY",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "macro": "WAIT",
+    "special": "WAIT",
+    "bull": "BUY",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "time": 1793974618.2318199,
+   "market": "GOLD",
+   "price": 4049.7,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "macro": "WAIT",
+    "special": "WAIT",
+    "bull": "BUY",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "time": 1793974664.687413,
+   "market": "OIL",
+   "price": 90.85,
+   "side": "BUY",
+   "taken": false,
+   "votes": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "macro": "WAIT",
+    "special": "WAIT",
+    "bull": "BUY",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
   }
  ],
  "weights": {},
