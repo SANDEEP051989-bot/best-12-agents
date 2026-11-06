@@ -1,4 +1,4 @@
-# agents_v2.py - 12 AI agents + time machine + report card + portfolio manager
+# agents_v2.py FAST - 12 AI agents + time machine + report card + portfolio manager
 # Markets: BTC, Gold, US Oil. Brain: Gemini. Reports: Telegram.
 import os, json, time, datetime as dt
 import requests
@@ -14,10 +14,19 @@ MARKETS = {"BTC": "BTC-USD", "GOLD": "GC=F", "OIL": "CL=F"}
 MIN_AGREE = 8          # change to 7 if too few signals
 MIN_CONF = 6           # average confidence needed (1-10)
 MAX_OPEN_LOSS_PCT = 6  # total loss limit across open paper trades
+MAX_RUN_SECONDS = 12 * 60   # stop asking Gemini after 12 minutes
 STATE_FILE = "state.json"
+START = time.time()
+STATS = {"asked": 0, "answered": 0, "busy": 0, "errors": []}
 
 
-# ---------------- PART 1: settings, data and chart numbers ----------------
+def log(msg):
+    print(f"[{int(time.time() - START)}s] {msg}", flush=True)
+
+
+def time_left():
+    return time.time() - START < MAX_RUN_SECONDS
+
 
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -77,9 +86,8 @@ def chart_facts(df):
 
 def get_news(ticker, n=8):
     try:
-        items = yf.Ticker(ticker).news[:n]
         out = []
-        for it in items:
+        for it in yf.Ticker(ticker).news[:n]:
             t = it.get("title") or it.get("content", {}).get("title", "")
             if t:
                 out.append(t)
@@ -116,24 +124,36 @@ def get_btc_extra():
     return out
 
 
-# ---------------- PART 2: Gemini brain and the agents ----------------
-
-def ask_gemini(prompt, tries=3):
+# ---------- Gemini: never gets stuck ----------
+def ask_gemini(prompt):
+    if not time_left():
+        return None
     url = (f"https://generativelanguage.googleapis.com/v1beta/models/"
            f"{MODEL}:generateContent?key={GEMINI_KEY}")
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"temperature": 0.3,
                                  "responseMimeType": "application/json"}}
-    for i in range(tries):
+    STATS["asked"] += 1
+    for attempt in range(2):          # at most 2 tries, short waits
         try:
-            r = requests.post(url, json=body, timeout=60)
+            r = requests.post(url, json=body, timeout=25)
             if r.status_code == 200:
                 txt = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+                STATS["answered"] += 1
                 return json.loads(txt)
-        except Exception:
-            pass
-        time.sleep(10 * (i + 1))   # free Gemini can be busy: wait and retry
-    return None
+            if r.status_code in (429, 503):
+                STATS["busy"] += 1
+                log(f"Gemini busy ({r.status_code}), short wait")
+                time.sleep(6)
+                continue
+            msg = f"Gemini error {r.status_code}: {r.text[:150]}"
+            log(msg)
+            if msg not in STATS["errors"]:
+                STATS["errors"].append(msg)
+            return None               # wrong key / wrong model: do not retry
+        except Exception as e:
+            log(f"Gemini call failed: {e}")
+    return None                       # skip this agent, move on
 
 
 ANSWER_RULE = ('Reply ONLY as JSON: {"vote": "BUY" or "SELL" or "WAIT", '
@@ -148,7 +168,7 @@ AGENTS = {
     "news":       "You read the headlines and judge if news is good or bad for price.",
     "mood":       "You judge crowd mood: fear, greed, funding and open interest if given.",
     "macro":      "You judge dollar index, US 10 year yield and S&P 500 effect on this market.",
-    "special":    "",   # filled per market below
+    "special":    "",
 }
 
 SPECIAL = {
@@ -169,16 +189,17 @@ def run_analysts(name, facts, state):
                   f"Your last calls and how they turned out: {json.dumps(past)}\n"
                   f"Learn from mistakes. {ANSWER_RULE}")
         ans = ask_gemini(prompt)
+        log(f"{name} {agent}: {(ans or {}).get('vote', 'skipped')}")
         if ans:
             votes[agent] = ans
-        time.sleep(4)   # stay inside free limits
+        time.sleep(2)
     return votes
 
 
 def debate(name, facts, votes):
     bull = ask_gemini(f"You are the BULL researcher for {name}. Make the strongest case to BUY "
                       f"using: {json.dumps(votes)} {json.dumps(facts)}. {ANSWER_RULE}")
-    time.sleep(4)
+    time.sleep(2)
     bear = ask_gemini(f"You are the BEAR researcher for {name}. Make the strongest case to SELL "
                       f"or stay out using: {json.dumps(votes)} {json.dumps(facts)}. {ANSWER_RULE}")
     return bull, bear
@@ -199,11 +220,8 @@ def portfolio_manager(name, plan, bull, bear, risk, open_trades):
     return ask_gemini(prompt) or {"final": "SKIP", "reason": "manager did not answer"}
 
 
-# ---------------- PART 3: time machine, report card, loss limit, boss ----------------
-
+# ---------- time machine, report card, loss limit, boss ----------
 def time_machine(df):
-    """Goes back over past bars: when the simple rule said BUY or SELL,
-    was price better 24 bars later? Returns today's rule vote + its past win rate."""
     c = df.Close
     e20, e50, r = c.ewm(span=20).mean(), c.ewm(span=50).mean(), rsi(c)
     wins = total = 0
@@ -219,14 +237,12 @@ def time_machine(df):
     now_sell = e20.iloc[-1] < e50.iloc[-1] and r.iloc[-1] < 45
     vote = "BUY" if now_buy else "SELL" if now_sell else "WAIT"
     if rate < 52:
-        vote = "WAIT"   # rule has not worked in the past: do not trust it
+        vote = "WAIT"
     return {"vote": vote, "confidence": min(10, max(1, int(rate / 10))),
             "reason": f"rule won {rate}% of {total} past signals"}
 
 
 def update_report_card(state, prices):
-    """Checks signals older than 24h, marks each agent right or wrong,
-    and sets its weight. Runs by itself every hour."""
     now = time.time()
     for s in state["signals"]:
         if s.get("checked") or now - s["time"] < 24 * 3600:
@@ -246,7 +262,7 @@ def update_report_card(state, prices):
             state["memory"][key] = state["memory"][key][-20:]
             hist = state["memory"][key]
             acc = sum(h["right"] for h in hist) / len(hist)
-            state["weights"][key] = round(0.5 + acc, 2)   # 0.5 = always wrong, 1.5 = always right
+            state["weights"][key] = round(0.5 + acc, 2)
 
 
 def open_loss_pct(state, prices):
@@ -259,7 +275,6 @@ def open_loss_pct(state, prices):
 
 
 def boss(name, votes, state):
-    """Counts votes with report-card weights. Needs MIN_AGREE agents on one side."""
     buy = [a for a, v in votes.items() if v and v.get("vote") == "BUY"]
     sell = [a for a, v in votes.items() if v and v.get("vote") == "SELL"]
     side, team = ("BUY", buy) if len(buy) >= len(sell) else ("SELL", sell)
@@ -280,12 +295,14 @@ def make_plan(side, facts):
             "target1": round(p - 2 * a, 2), "target2": round(p - 3.5 * a, 2)}
 
 
-# ---------------- PART 4: Telegram, weekly report card, main run ----------------
-
+# ---------- Telegram, weekly report, main ----------
 def send(text):
     for chunk in [text[i:i + 3900] for i in range(0, len(text), 3900)]:
-        requests.post(f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
-                      data={"chat_id": TG_CHAT, "text": chunk}, timeout=20)
+        try:
+            requests.post(f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
+                          data={"chat_id": TG_CHAT, "text": chunk}, timeout=20)
+        except Exception as e:
+            log(f"Telegram failed: {e}")
 
 
 def weekly_report(state):
@@ -293,17 +310,20 @@ def weekly_report(state):
     for key, hist in sorted(state["memory"].items()):
         acc = round(sum(h["right"] for h in hist) / len(hist) * 100)
         lines.append(f"{key}: right {acc}% of last {len(hist)} calls, weight {state['weights'].get(key, 1.0)}")
+    if len(lines) == 1:
+        lines.append("Not enough checked signals yet.")
     send("\n".join(lines))
 
 
 def main():
+    log("start")
     state = load_state()
     prices = {}
     for name, t in MARKETS.items():
         try:
             prices[name] = float(get_data(t, "5d", "1h").Close.iloc[-1])
-        except Exception:
-            pass
+        except Exception as e:
+            log(f"price {name} failed: {e}")
     update_report_card(state, prices)
     loss = open_loss_pct(state, prices)
     macro = get_macro()
@@ -312,16 +332,20 @@ def main():
 
     for name, t in MARKETS.items():
         try:
+            log(f"--- {name} ---")
             h1 = get_data(t, "60d", "1h")
             d1 = get_data(t, "1y", "1d")
             facts = {"hourly": chart_facts(h1), "daily": chart_facts(d1),
                      "news": get_news(t), "macro": macro}
             if name == "BTC":
                 facts["btc_extra"] = get_btc_extra()
-            votes = run_analysts(name, facts, state)       # 9 agents
-            bull, bear = debate(name, facts, votes)        # 2 agents
-            votes["bull"], votes["bear"] = bull, bear
-            votes["time_machine"] = time_machine(h1)       # 1 agent = 12
+            votes = run_analysts(name, facts, state)
+            bull, bear = debate(name, facts, votes)
+            if bull:
+                votes["bull"] = bull
+            if bear:
+                votes["bear"] = bear
+            votes["time_machine"] = time_machine(h1)
             b = boss(name, votes, state)
             plan = make_plan(b["side"], facts["hourly"])
             line = (f"\n{name} {facts['hourly']['price']} | {b['side']} "
@@ -346,13 +370,22 @@ def main():
                 "price": facts["hourly"]["price"], "side": b["side"], "taken": taken,
                 "votes": {a: (v or {}).get("vote", "WAIT") for a, v in votes.items()}})
         except Exception as e:
+            log(f"{name} error: {e}")
             report.append(f"\n{name}: error {e}")
 
+    report.append(f"\nGemini: {STATS['answered']} of {STATS['asked']} questions answered, "
+                  f"busy {STATS['busy']} times. Run time {int(time.time() - START)}s")
+    for err in STATS["errors"][:2]:
+        report.append(err)
     send("\n".join(report) + "\n\nPaper trades only. Not financial advice.")
+
     now = dt.datetime.utcnow()
-    if now.weekday() == 0 and now.hour == 3:   # Monday morning India time
+    today = now.strftime("%Y-%m-%d")
+    if now.weekday() == 0 and now.hour >= 2 and state.get("last_weekly") != today:
         weekly_report(state)
+        state["last_weekly"] = today
     save_state(state)
+    log("done")
 
 
 if __name__ == "__main__":
