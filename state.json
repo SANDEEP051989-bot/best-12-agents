@@ -1,14 +1,15 @@
 {
  "weights": {
-  "BTC:trend": 1.39,
-  "BTC:daily_view": 1.39,
-  "BTC:news": 1.39,
-  "BTC:macro": 1.39,
-  "BTC:special": 1.39,
+  "BTC:trend": 1.41,
+  "BTC:daily_view": 1.4,
+  "BTC:news": 1.4,
+  "BTC:macro": 1.4,
+  "BTC:special": 1.4,
   "BTC:volatility": 1.5,
   "BTC:mood": 1.5,
-  "BTC:levels": 1.33,
-  "BTC:bear": 1.33
+  "BTC:levels": 1.38,
+  "BTC:bear": 1.36,
+  "BTC:momentum": 1.5
  },
  "memory": {
   "BTC:trend": [
@@ -56,6 +57,16 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75938.3
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:daily_view": [
@@ -103,6 +114,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:news": [
@@ -150,6 +166,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:macro": [
@@ -197,6 +218,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:special": [
@@ -244,6 +270,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "GOLD:trend": [
@@ -318,6 +349,16 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75938.3
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:bear": [
@@ -350,6 +391,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:volatility": [
@@ -387,6 +433,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:mood": [
@@ -424,6 +475,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ],
   "BTC:inspector": [
@@ -431,6 +487,11 @@
     "said": "REMOVED SELL",
     "right": false,
     "price": 75996.16
+   },
+   {
+    "said": "REMOVED SELL",
+    "right": false,
+    "price": 75773.26
    }
   ],
   "BTC:momentum": [
@@ -453,6 +514,11 @@
     "said": "SELL",
     "right": true,
     "price": 75853.94
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75773.26
    }
   ]
  },
@@ -1329,7 +1395,8 @@
     "levels": "SELL",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794035194.5570877,
@@ -1712,7 +1779,8 @@
    },
    "inspector_removed": {
     "special": "SELL"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794056030.84554,
@@ -2268,6 +2336,39 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1794088142.6598287,
+   "market": "BTC",
+   "price": 75509.57,
+   "atr": 148.6512,
+   "votes": {
+    "trend": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794088144.6641436,
+   "market": "GOLD",
+   "price": 4074.9,
+   "atr": 16.4571,
+   "votes": {
+    "volatility": "SELL",
+    "special": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794088146.6682215,
+   "market": "OIL",
+   "price": 90.83,
+   "atr": 1.025,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [
@@ -2297,6 +2398,6 @@
   }
  ],
  "last_oi": {
-  "okx": 34338.0
+  "okx": 34535.0
  }
 }
