@@ -790,10 +790,40 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1794013721.8104475,
+   "market": "BTC",
+   "price": 75815.53,
+   "atr": 412.2935,
+   "votes": {
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794013723.8173385,
+   "market": "GOLD",
+   "price": 4079.5,
+   "atr": 16.4571,
+   "votes": {
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794013725.8233304,
+   "market": "OIL",
+   "price": 90.34,
+   "atr": 1.01,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [],
  "last_oi": {
-  "okx": 34588.0
+  "okx": 34629.0
  }
 }
