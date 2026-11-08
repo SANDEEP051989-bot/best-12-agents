@@ -118,11 +118,6 @@
    {
     "said": "SELL",
     "right": false,
-    "price": 75708.19
-   },
-   {
-    "said": "SELL",
-    "right": false,
     "price": 75664.94
    },
    {
@@ -214,6 +209,11 @@
     "said": "SELL",
     "right": true,
     "price": 75756.66
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 74229.28
    }
   ],
   "BTC:news": [
@@ -1114,6 +1114,13 @@
     "said": "SELL",
     "right": true,
     "price": 75616.23
+   }
+  ],
+  "BTC:time_machine": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 74229.28
    }
   ]
  },
@@ -4261,7 +4268,8 @@
     "daily_view": "SELL",
     "time_machine": "SELL"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794178262.5666254,
@@ -4281,6 +4289,36 @@
    "votes": {
     "levels": "WAIT",
     "volatility": "WAIT",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794181746.1063766,
+   "market": "BTC",
+   "price": 75154.97,
+   "atr": 434.322,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794181748.1153643,
+   "market": "GOLD",
+   "price": 4075.9,
+   "atr": 15.1571,
+   "votes": {
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794181750.1243103,
+   "market": "OIL",
+   "price": 90.19,
+   "atr": 0.9657,
+   "votes": {
     "time_machine": "SELL"
    },
    "inspector_removed": {}
@@ -4354,6 +4392,6 @@
   }
  ],
  "last_oi": {
-  "okx": 33844.0
+  "okx": 33657.0
  }
 }
