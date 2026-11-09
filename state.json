@@ -9,7 +9,15 @@
   "BTC:mood": 0.95,
   "BTC:levels": 0.8,
   "BTC:bear": 0.95,
-  "BTC:momentum": 0.85
+  "BTC:momentum": 0.85,
+  "GOLD:trend": 0.5,
+  "GOLD:volatility": 0.5,
+  "GOLD:daily_view": 0.5,
+  "GOLD:macro": 1.5,
+  "GOLD:momentum": 0.5,
+  "GOLD:news": 0.9,
+  "GOLD:mood": 1.44,
+  "GOLD:special": 0.5
  },
  "memory": {
   "BTC:trend": [
@@ -526,28 +534,408 @@
    {
     "said": "SELL",
     "right": false,
-    "price": 4046.3
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
    }
   ],
   "GOLD:volatility": [
    {
-    "said": "BUY",
-    "right": true,
-    "price": 4046.3
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
    }
   ],
   "GOLD:daily_view": [
    {
     "said": "SELL",
     "right": false,
-    "price": 4046.3
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
    }
   ],
   "GOLD:macro": [
    {
     "said": "BUY",
     "right": true,
-    "price": 4046.3
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
    }
   ],
   "GOLD:bull": [
@@ -1122,6 +1510,518 @@
     "right": false,
     "price": 74229.28
    }
+  ],
+  "GOLD:momentum": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   }
+  ],
+  "GOLD:levels": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4052.4
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4060.5
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4057.1
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4065.9
+   }
+  ],
+  "GOLD:news": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   }
+  ],
+  "GOLD:special": [
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4074.9
+   }
+  ],
+  "GOLD:mood": [
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4052.4
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4060.5
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 4057.1
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4065.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4068.1
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4072.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "BUY",
+    "right": true,
+    "price": 4074.9
+   }
+  ],
+  "GOLD:inspector": [
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED SELL",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED SELL",
+    "right": true,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   },
+   {
+    "said": "REMOVED BUY",
+    "right": false,
+    "price": 4074.9
+   }
   ]
  },
  "votes_log": [
@@ -1232,7 +2132,8 @@
    },
    "inspector_changes": {
     "mood": "WAIT"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793977534.3660119,
@@ -1300,7 +2201,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793979081.1874783,
@@ -1366,7 +2268,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793980364.0326192,
@@ -1434,7 +2337,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793984330.3201716,
@@ -1504,7 +2408,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793987452.2367704,
@@ -1636,7 +2541,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1793994877.7359931,
@@ -1691,7 +2597,8 @@
     "special": "SELL",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1793998657.5615687,
@@ -1724,7 +2631,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794001933.7161849,
@@ -2285,7 +3193,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794048332.1520314,
@@ -2351,7 +3260,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794051696.4629328,
@@ -2421,7 +3331,8 @@
    },
    "inspector_removed": {
     "news": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794056033.8476195,
@@ -2489,7 +3400,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794059554.9478233,
@@ -2557,7 +3469,8 @@
    },
    "inspector_removed": {
     "special": "SELL"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794062630.5255964,
@@ -2625,7 +3538,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794066003.0411541,
@@ -2695,7 +3609,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794069702.7331967,
@@ -2765,7 +3680,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794073149.5909896,
@@ -2831,7 +3747,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794077115.228065,
@@ -2899,7 +3816,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794080704.1691246,
@@ -2948,7 +3866,8 @@
     "macro": "BUY",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794084588.8124607,
@@ -2983,7 +3902,8 @@
     "special": "SELL",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794088146.6682215,
@@ -3017,7 +3937,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794091786.748259,
@@ -3048,7 +3969,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794095321.4486206,
@@ -3079,7 +4001,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794100283.3021648,
@@ -3113,7 +4036,8 @@
     "daily_view": "SELL",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794104071.1349447,
@@ -3149,7 +4073,8 @@
     "levels": "WAIT",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794107118.6631923,
@@ -3185,7 +4110,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794110700.883583,
@@ -3217,7 +4143,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794114280.2102666,
@@ -3248,7 +4175,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794117695.0684862,
@@ -3284,7 +4212,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794121675.8067272,
@@ -3339,7 +4268,8 @@
    },
    "inspector_removed": {
     "news": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794124939.3003945,
@@ -3405,7 +4335,8 @@
     "bear": "WAIT",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794128000.9992645,
@@ -3473,7 +4404,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794131325.8834233,
@@ -3543,7 +4475,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794134683.4659107,
@@ -3613,7 +4546,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794138067.1895406,
@@ -3681,7 +4615,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794142267.8587286,
@@ -3747,7 +4682,8 @@
     "bear": "WAIT",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794145896.0281756,
@@ -3817,7 +4753,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794148960.8349814,
@@ -3883,7 +4820,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794152317.0188985,
@@ -3949,7 +4887,8 @@
    },
    "inspector_removed": {
     "special": "SELL"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794156107.492195,
@@ -4017,7 +4956,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794159542.835855,
@@ -4085,7 +5025,8 @@
    },
    "inspector_removed": {
     "mood": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794163455.1689553,
@@ -4153,7 +5094,8 @@
    },
    "inspector_removed": {
     "macro": "BUY"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794167147.2633183,
@@ -4209,7 +5151,8 @@
     "bear": "WAIT",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794171000.634395,
@@ -4247,7 +5190,8 @@
     "volatility": "SELL",
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794174521.1539946,
@@ -4279,7 +5223,8 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794178264.5757086,
@@ -4311,13 +5256,48 @@
    "votes": {
     "time_machine": "WAIT"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794181750.1243103,
    "market": "OIL",
    "price": 90.19,
    "atr": 0.9657,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794186842.302373,
+   "market": "BTC",
+   "price": 75244.57,
+   "atr": 253.2238,
+   "votes": {
+    "trend": "SELL",
+    "levels": "WAIT",
+    "macro": "SELL",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794186844.3084462,
+   "market": "GOLD",
+   "price": 4104.8,
+   "atr": 18.6857,
+   "votes": {
+    "daily_view": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794186846.3145356,
+   "market": "OIL",
+   "price": 90.73,
+   "atr": 0.9364,
    "votes": {
     "time_machine": "SELL"
    },
@@ -4392,6 +5372,6 @@
   }
  ],
  "last_oi": {
-  "okx": 33657.0
+  "okx": 33748.0
  }
 }
