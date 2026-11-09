@@ -1519,6 +1519,11 @@
     "said": "SELL",
     "right": true,
     "price": 75125.95
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 75154.97
    }
   ],
   "GOLD:momentum": [
@@ -5289,7 +5294,8 @@
    "votes": {
     "time_machine": "SELL"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794181748.1153643,
@@ -5443,6 +5449,42 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1794205283.3405545,
+   "market": "BTC",
+   "price": 74483.69,
+   "atr": 605.5692,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "volatility": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794205285.346765,
+   "market": "GOLD",
+   "price": 4132.6,
+   "atr": 20.2785,
+   "votes": {
+    "volatility": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794205287.352891,
+   "market": "OIL",
+   "price": 90.17,
+   "atr": 0.8621,
+   "votes": {
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [
@@ -5513,7 +5555,7 @@
   }
  ],
  "last_oi": {
-  "okx": 34189.0
+  "okx": 34616.0
  },
  "last_weekly": "2026-11-09"
 }
