@@ -12,11 +12,11 @@ on:
   workflow_dispatch:             # the "Run workflow" button
     inputs:
       mode:
-        description: "test = check keys and data, run = one normal hour, daily-pdf / weekly-pdf = send a PDF now"
+        description: "test = check keys and data, report = send the latest full report now, run = one normal hour, daily-pdf / weekly-pdf = send a PDF now"
         required: true
         default: "test"
         type: choice
-        options: [test, run, daily-pdf, weekly-pdf]
+        options: [test, report, run, daily-pdf, weekly-pdf]
       markets:
         description: "Which markets (for run): ALL, BTC, or GOLD,OIL"
         required: false
@@ -57,7 +57,7 @@ jobs:
           SHEET_ID: ${{ vars.SHEET_ID || secrets.SHEET_ID }}
           CAPITAL: ${{ vars.CAPITAL || secrets.CAPITAL }}          # empty = Rs 20,000
           RISK_PCT: ${{ vars.RISK_PCT || secrets.RISK_PCT }}
-          TG_MODE: ${{ vars.TG_MODE || secrets.TG_MODE }}          # empty = Telegram only when a trade forms; "all" = also hourly summaries
+          TG_MODE: ${{ vars.TG_MODE || secrets.TG_MODE }}          # empty = full report every 2 hours + trade cards; "all" = report every hour; "trades" = trade cards only
           REAL_MONEY: ${{ vars.REAL_MONEY || secrets.REAL_MONEY }} # empty = every card says PAPER
           MIN_SIDE: ${{ vars.MIN_SIDE }}                           # empty = 6 agents must agree (research)
           SWING_K: ${{ vars.SWING_K }}                             # empty = 3-candle swing points for stops; 10 = strict version
