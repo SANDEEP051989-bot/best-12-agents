@@ -1,12 +1,12 @@
 {
  "skip_until": {},
  "fail_streak": {
-  "groq|openai/gpt-oss-20b": 1,
+  "groq|openai/gpt-oss-20b": 0,
   "gemini|gemini-3.5-flash-lite": 0,
   "groq|qwen/qwen3.8-27b": 1,
-  "openrouter|google/gemma-4-31b-it:free": 1,
+  "openrouter|google/gemma-4-31b-it:free": 2,
   "groq|llama-3.3-70b-versatile": 1,
-  "groq|openai/gpt-oss-120b": 2,
+  "groq|openai/gpt-oss-120b": 0,
   "openrouter|nvidia/nemotron-3-ultra-550b-a55b:free": 2,
   "gemini|gemini-3.8-flash": 2
  },
@@ -16,11 +16,25 @@
   "2026-11-09|groq|network": 15,
   "2026-11-09|openrouter|network": 9,
   "2026-11-09|gemini|network": 4,
-  "2026-11-09|gemini|503": 2
+  "2026-11-09|gemini|503": 2,
+  "2026-11-09|openrouter|429": 3
  },
  "discovered": {
   "day": "2026-11-09",
   "models": {
+   "groq": [
+    "whisper-large-v3-turbo",
+    "canopylabs/orpheus-arabic-saudi",
+    "meta-llama/llama-prompt-guard-2-86m",
+    "canopylabs/orpheus-v1-english",
+    "openai/gpt-oss-120b",
+    "meta-llama/llama-prompt-guard-2-22m",
+    "whisper-large-v3",
+    "openai/gpt-oss-20b",
+    "openai/gpt-oss-safeguard-20b",
+    "allam-2-7b",
+    "qwen/qwen3.8-27b"
+   ],
    "openrouter": [
     "liquid/lfm-3-1.7b:free",
     "stealth/crouton-alpha",
