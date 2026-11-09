@@ -90,5 +90,8 @@
    ]
   }
  },
- "weights": {}
+ "weights": {},
+ "swap_done": {
+  "2026-W45": true
+ }
 }
