@@ -16,8 +16,10 @@ Every hour (GitHub runs Bitcoin at minute 7, and Gold + US Oil at minute 37 beca
   5. vote: 6 on one side, at most 1 against, 10 of 12 answered, trend + daily view agree, no blocker
   6. bull vs bear rebuttal (candidate trades only) -> risk officer (code)
      -> inspector (AI, can only BLOCK, test mode on Gold and Oil) -> desk head (code)
-  7. Telegram: a card only when a trade forms, short updates for open trades,
-     a PDF of the whole day's hourly reports just after midnight India time, and the report card PDF on Sunday.
+  7. Telegram: a full report for each market every 2 hours (numbered points, all 12 agents with their reasons,
+     the code check and the AI inspector), a special card the moment a trade forms, short updates for open
+     trades, a PDF of the whole day's hourly reports just after midnight India time, and the report card PDF
+     on Sunday.
 
 A "rules-only twin" (no AI at all) and a "trend-only twin" trade on paper beside the team,
 so after about 100 trades per market you can see if the AI layer earns its place.
@@ -26,6 +28,7 @@ Commands:
   python agents_v7.py run          the hourly run for all markets (default)
   python agents_v7.py run BTC      only Bitcoin   (python agents_v7.py run GOLD,OIL = only gold and oil)
   python agents_v7.py test         checks Telegram, every data source and every AI brain
+  python agents_v7.py report       sends the latest full report of each market again, now
   python agents_v7.py daily-pdf    sends today's PDF now
   python agents_v7.py weekly-pdf   sends the report card PDF now
 
@@ -34,6 +37,7 @@ Paper trades only by default. Not financial advice.
 import base64
 import datetime as dt
 import hashlib
+import html
 import io
 import json
 import math
@@ -52,6 +56,24 @@ from zoneinfo import ZoneInfo
 import numpy as np
 import pandas as pd
 import requests
+
+
+def _clean_secret(name):
+    """Pasted keys often carry a space, a line break, quotes, 'Bearer ' or 'NAME=' in front. Remove them."""
+    v = os.environ.get(name)
+    if v is None:
+        return
+    v = v.strip().strip('"').strip("'").strip()
+    if v.startswith("export "):
+        v = v[7:].strip()
+    for pre in (name + "=", name + ":", "Bearer ", "bearer "):
+        if v.startswith(pre):
+            v = v[len(pre):].strip().strip('"').strip("'").strip()
+    os.environ[name] = v
+
+
+for _k in ("TG_TOKEN", "TG_CHAT", "GEMINI_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY", "SHEET_ID", "SHEET_NAME"):
+    _clean_secret(_k)
 
 VERSION = "v7.0"
 IST = ZoneInfo("Asia/Kolkata")
@@ -90,7 +112,11 @@ CFG = {
     "AI_TIMEOUT": 45, "AI_GAP_S": float(_env_num("AI_GAP_S", 2.5)),
     "RUN_DEADLINE_MIN": _env_num("RUN_DEADLINE_MIN", 22),  # no new AI calls after this many minutes (job limit 40)
     "FILL_LAG_MIN": 10,                        # paper fill = first candle that starts after (decision time - 10 min)
-    "TG_MODE": (os.getenv("TG_MODE") or "trades").lower(),   # "trades" or "all"
+    # Telegram: "2h" = full report of each market every 2 hours + a special card for each trade (default),
+    # "all" = full report every hour, "trades" = only the trade cards and trade updates
+    "TG_MODE": {"all": "all", "1h": "all", "hourly": "all", "every hour": "all", "trades": "trades",
+                "trade": "trades", "only trades": "trades", "off": "trades"}.get(
+        (os.getenv("TG_MODE") or "2h").strip().lower(), "2h"),          # anything else = "2h"
     "REAL_MONEY": {m.strip().upper() for m in (os.getenv("REAL_MONEY") or "").split(",") if m.strip()},
     "USDINR_DEFAULT": 88.0,
     "BTC_CONTRACT": 0.001,                     # Delta Exchange India: 0.001 BTC per contract
@@ -100,7 +126,11 @@ MARKETS = {
     "BTC": {"name": "Bitcoin", "ticker": "BTC-USD", "is_247": True, "lags": [24, 72, 168, 336],
             "lags4": [6, 18, 42, 84], "daily": (100, 20, 10), "round_big": 5000, "round_bonus": 10000,
             "round_pts": 2.0, "round_small": 1000, "zone_pct": (0.3, 1.0), "fade_days": 10, "trail_atr": 3.0,
-            "cost_pct": 0.17, "decimals": 0, "signals": ("break", "retest"), "paper_only": False,
+            # Delta Exchange India: limit (maker) entry 0.02% + stop (taker) exit 0.05%, +18% GST on fees = 0.083%,
+            # plus about 0.035% for spread and exit slippage = 0.12% round trip. Market orders both ways would be
+            # about 0.17%, and with this market's normal 1-hour move that is more than the 0.2R cost limit
+            # (research: "use limit orders for entries where possible"). The trade card says: use a limit order.
+            "cost_pct": 0.12, "decimals": 0, "signals": ("break", "retest"), "paper_only": False,
             "fill_bars": 1, "data_delay_min": 0},
     "GOLD": {"name": "Gold", "ticker": "GC=F", "is_247": False, "lags": [24, 72, 120, 240],
              "lags4": [6, 18, 30, 60], "daily": (150, 40, 20), "round_big": 100, "round_bonus": 1000,
@@ -162,8 +192,8 @@ ROLE_MODELS = {
     "mood": [("openrouter", "b"), ("groq", "tiny"), ("gemini", "lite")],
     "bull": [("openrouter", "c"), ("groq", "alt"), ("gemini", "lite")],
     "bear": [("groq", "mid"), ("gemini", "lite"), ("openrouter", "a")],
-    "news": [("groq", "big"), ("openrouter", "big"), ("gemini", "flash")],
-    "inspector": [("groq", "big"), ("gemini", "flash"), ("openrouter", "big")],
+    "news": [("groq", "big"), ("openrouter", "big"), ("gemini", "flash"), ("gemini", "lite")],
+    "inspector": [("groq", "big"), ("gemini", "flash"), ("openrouter", "big"), ("gemini", "lite")],
 }
 BRAIN_NAME = {"gemini": "Gemini", "groq": "Groq", "openrouter": "OpenRouter"}
 
@@ -219,8 +249,13 @@ def finite(*xs):
         return False
 
 
+def safe_str(s):
+    """Text without broken characters (a lone half of an emoji from a feed or an AI breaks encoding)."""
+    return str(s).encode("utf-8", "replace").decode("utf-8")
+
+
 def clip(text, n):
-    text = " ".join(str(text or "").split())
+    text = " ".join(safe_str(text or "").split())
     return text if len(text) <= n else text[:n - 3].rstrip() + "..."
 
 
@@ -1146,9 +1181,13 @@ def agent_levels(x):
         return A("levels", "WAIT", "lvl.no_signal", "no break, retest or sweep of a strong zone (plain touches never "
                  "vote)", data)
     d, kind, z, k = sorted(usable, key=lambda u: u[3])[0]
-    where = f" of the zone at {pxm(z['mid'], mkt)} ({z['pts']:.1f} points)" if z else ""
-    reason = {"break": f"1H close broke{where}", "retest": f"retest after a break{where}",
-              "sweep": f"sweep and reclaim{where}", "eia_fade": "EIA spike faded back inside the pre-report range"}[kind]
+    where = f" the zone at {pxm(z['mid'], mkt)} ({z['pts']:.1f} points)" if z else " a strong zone"
+    up = d == "BUY"
+    reason = {"break": f"1-hour close broke {'up' if up else 'down'} through{where}",
+              "retest": f"price came back to test{where} after breaking it, and held",
+              "sweep": f"price poked {'below' if up else 'above'}{where} and closed back {'above' if up else 'below'} it "
+                       "(sweep and reclaim)",
+              "eia_fade": "EIA spike faded back inside the pre-report range"}[kind]
     if z:
         data["zone_mid"] = float(z["mid"])
         data["zone_points"] = float(z["pts"])
@@ -1654,7 +1693,10 @@ def fetch_flows(st, now):
             out["gld"] = {"tonnes": float(s[-1]), "chg5": float((s[-1] / s[-6] - 1) * 100)}
         note_source("gld", True)
     except Exception:
-        note_source("gld", False, f"{status}")
+        txt = (text or "").lstrip()[:200].lower()
+        note_source("gld", False, f"{status}" if status != 200 else
+                    ("the site sent a web page instead of the data file (blocked)" if txt.startswith("<") else
+                     "the data file's layout changed"))
     for mkt, code in (("GOLD", "088691"), ("OIL", "067651")):
         j = http_json("https://publicreporting.cftc.gov/resource/72hh-3qpy.json",
                       params={"cftc_contract_market_code": code, "$order": "report_date_as_yyyy_mm_dd DESC",
@@ -1858,6 +1900,7 @@ def event_status(events, mkt, now, horizon_h=24):
 
 
 # ----------------------------------------------------------------- news (code filters, AI labels, code score)
+_GDELT_LAST = 0.0
 NEWS_FEEDS = {
     "BTC": ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss"],
     "GOLD": [],                       # Google News and GDELT cover gold (the Kitco feed looks discontinued)
@@ -1888,10 +1931,10 @@ def fetch_news_items(mkt, now):
         try:
             root = ET.fromstring(text.encode("utf-8", "ignore"))
             for it in root.iter("item"):
-                title = (it.findtext("title") or "").strip()
+                title = safe_str(it.findtext("title") or "").strip()
                 pub = it.findtext("pubDate")
                 src = it.find("source")
-                domain = (src.text if src is not None and src.text else url.split("/")[2]).strip().lower()
+                domain = safe_str(src.text if src is not None and src.text else url.split("/")[2]).strip().lower()
                 if not title or not pub:
                     continue
                 t = utc_ts(parsedate_to_datetime(pub))
@@ -1899,16 +1942,33 @@ def fetch_news_items(mkt, now):
             note_source("news:" + url.split("/")[2], True)
         except Exception:
             note_source("news:" + url.split("/")[2], False, "parse")
-    j = http_json("https://api.gdeltproject.org/api/v2/doc/doc",
-                  params={"query": GDELT_QUERY[mkt] + " sourcelang:english", "mode": "artlist",
-                          "format": "json", "timespan": "90min", "maxrecords": 50, "sort": "datedesc"}, timeout=20)
+    global _GDELT_LAST
+    wait = 6.0 - (time.time() - _GDELT_LAST)            # GDELT asks for at most one request every 5 seconds
+    if wait > 0:
+        time.sleep(wait)
+    _GDELT_LAST = time.time()
+    status, text = http_get("https://api.gdeltproject.org/api/v2/doc/doc",
+                            params={"query": GDELT_QUERY[mkt] + " sourcelang:english", "mode": "artlist",
+                                    "format": "json", "timespan": "90min", "maxrecords": 50, "sort": "datedesc"},
+                            timeout=25, tries=1)
     try:
-        for a in j.get("articles", []):
-            t = pd.Timestamp(dt.datetime.strptime(a["seendate"], "%Y%m%dT%H%M%SZ"))
-            items.append({"title": a["title"].strip(), "time": t, "outlet": a.get("domain", "gdelt").lower()})
+        if status != 200:
+            raise ValueError(f"{status}")
+        if not text.strip():
+            j = {}                                      # an empty answer = no stories right now
+        else:
+            j = json.loads(text, strict=False)          # GDELT titles can hold raw control characters
+        for a in (j.get("articles") or []):
+            try:
+                t = pd.Timestamp(dt.datetime.strptime(a["seendate"], "%Y%m%dT%H%M%SZ"))
+                items.append({"title": safe_str(a["title"]).strip(), "time": t,
+                              "outlet": safe_str(a.get("domain", "gdelt")).lower()})
+            except Exception:
+                continue
         note_source("news:gdelt", True)
     except Exception:
-        note_source("news:gdelt", False)
+        note_source("news:gdelt", False, str(status) if status != 200 else
+                    "not JSON: " + clip(re.sub(r"\s+", " ", text or ""), 40))
     return clean_news(items, mkt, now)
 
 
@@ -2004,33 +2064,57 @@ class Brains:
         self.calls, self.down, self.last_t, self.log = 0, set(), {}, []
         self.available = {}
         self.t0 = time.time()
+        self.last_err = {}          # provider -> (status, first words of the error) - shown in the test message
+        self.list_status = {}       # provider -> status of the "which models exist" request
 
     def any(self):
         return any(v for v in self.key.values())
 
-    def discover(self):
-        """Which model names exist today (cached for a day)."""
+    def discover(self, force=False):
+        """Which model names exist today (cached for a day per provider; a provider whose list failed - bad key,
+        site down - is asked again next hour)."""
         d = self.st.models["discovered"]
         today = self.now.strftime("%Y-%m-%d")
-        if d.get("day") == today:
-            self.available = d.get("models", {})
+        cached = dict(d.get("models", {})) if d.get("day") == today and not force else {}
+        if all(p in cached for p in ("groq", "openrouter", "gemini") if self.key[p]):
+            self.available = cached
             return
-        found = {}
-        if self.key["groq"]:
-            j = http_json("https://api.groq.com/openai/v1/models", headers={"Authorization": f"Bearer {self.key['groq']}"})
-            if j and j.get("data"):
-                found["groq"] = [m["id"] for m in j["data"]]
-        if self.key["openrouter"]:
-            j = http_json("https://openrouter.ai/api/v1/models")
-            if j and j.get("data"):
-                found["openrouter"] = [m["id"] for m in j["data"] if str(m["id"]).endswith(":free") or
-                                       str((m.get("pricing") or {}).get("prompt", "1")) in ("0", "0.0")]
-        if self.key["gemini"]:
-            j = http_json("https://generativelanguage.googleapis.com/v1beta/models", params={"pageSize": 200},
-                          headers={"x-goog-api-key": self.key["gemini"]})
-            if j and j.get("models"):
-                found["gemini"] = [m["name"].replace("models/", "") for m in j["models"]
-                                   if "generateContent" in (m.get("supportedGenerationMethods") or [])]
+        found = dict(cached)
+
+        def get(p, url, params=None, headers=None):
+            status, text = http_get(url, params=params, headers=headers, timeout=20, tries=2)
+            self.list_status[p] = (status, clip(re.sub(r"\s+", " ", text or ""), 160) if status != 200 else "")
+            if status != 200:
+                return None
+            try:
+                return json.loads(text)
+            except Exception:
+                self.list_status[p] = ("not JSON", clip(text, 80))
+                return None
+        def rows(j, key):                              # a list of dicts, whatever shape the answer has
+            v = j.get(key) if isinstance(j, dict) else None
+            return [m for m in v if isinstance(m, dict)] if isinstance(v, list) else []
+        if self.key["groq"] and "groq" not in found:
+            j = get("groq", "https://api.groq.com/openai/v1/models",
+                    headers={"Authorization": f"Bearer {self.key['groq']}"})
+            ids = [str(m["id"]) for m in rows(j, "data") if m.get("id")]
+            if ids:
+                found["groq"] = ids
+        if self.key["openrouter"] and "openrouter" not in found:
+            j = get("openrouter", "https://openrouter.ai/api/v1/models")
+            ids = [str(m["id"]) for m in rows(j, "data") if m.get("id") and (
+                str(m["id"]).endswith(":free") or
+                str((m.get("pricing") or {}).get("prompt", "1") if isinstance(m.get("pricing"), dict) else "1")
+                in ("0", "0.0"))]
+            if ids:
+                found["openrouter"] = ids
+        if self.key["gemini"] and "gemini" not in found:
+            j = get("gemini", "https://generativelanguage.googleapis.com/v1beta/models", params={"pageSize": 200},
+                    headers={"x-goog-api-key": self.key["gemini"]})
+            ids = [str(m["name"]).replace("models/", "") for m in rows(j, "models") if m.get("name") and
+                   "generateContent" in (m.get("supportedGenerationMethods") or [])]
+            if ids:
+                found["gemini"] = ids
         self.available = found
         self.st.models["discovered"] = {"day": today, "models": found}
 
@@ -2089,12 +2173,17 @@ class Brains:
                                     "generationConfig": cfg}, timeout=CFG["AI_TIMEOUT"])
             if r.status_code != 200:
                 return r.status_code, None, r.headers.get("retry-after"), r.text[:3000]
-            cand = (r.json().get("candidates") or [{}])[0]
-            parts = (cand.get("content") or {}).get("parts") or []
-            text = "".join(x.get("text", "") for x in parts if not x.get("thought")).strip()
+            j = self._json(r)
+            if j is None:
+                return "unreadable", None, None, clip(r.text, 120)
+            cands = j.get("candidates")
+            cand = cands[0] if isinstance(cands, list) and cands and isinstance(cands[0], dict) else {}
+            parts = (cand.get("content") or {}).get("parts") if isinstance(cand.get("content"), dict) else []
+            parts = [x for x in (parts or []) if isinstance(x, dict)]
+            text = "".join(str(x.get("text", "")) for x in parts if not x.get("thought")).strip()
             if not text and str(cand.get("finishReason", "")).upper() == "MAX_TOKENS":
                 return "length", None, None, "MAX_TOKENS"
-            return 200, text or None, None, ""
+            return (200, text, None, "") if text else ("empty", None, None, "an empty answer")
         url = {"groq": "https://api.groq.com/openai/v1/chat/completions",
                "openrouter": "https://openrouter.ai/api/v1/chat/completions"}[p]
         body = {"model": m, "messages": [{"role": "user", "content": prompt}], "temperature": temperature,
@@ -2115,15 +2204,28 @@ class Brains:
                           json=body, timeout=CFG["AI_TIMEOUT"])
         if r.status_code != 200:
             return r.status_code, None, r.headers.get("retry-after"), r.text[:3000]
-        j = r.json()
-        if isinstance(j, dict) and j.get("error"):             # OpenRouter can return an error inside a 200
+        j = self._json(r)
+        if j is None:
+            return "unreadable", None, None, clip(r.text, 120)
+        if j.get("error"):                                      # OpenRouter can return an error inside a 200
             code = (j["error"] or {}).get("code") if isinstance(j["error"], dict) else None
             return int(code) if str(code).isdigit() else 502, None, None, str(j["error"])[:3000]
-        ch = (j.get("choices") or [{}])[0]
-        text = ((ch.get("message") or {}).get("content") or "").strip()
+        chs = j.get("choices")
+        ch = chs[0] if isinstance(chs, list) and chs and isinstance(chs[0], dict) else {}
+        msg = ch.get("message") if isinstance(ch.get("message"), dict) else {}
+        text = str(msg.get("content") or "").strip()
         if not text and str(ch.get("finish_reason", "")).lower() == "length":
             return "length", None, None, "length"
-        return 200, text or None, None, ""
+        return (200, text, None, "") if text else ("empty", None, None, "an empty answer")
+
+    @staticmethod
+    def _json(r):
+        """The answer as a dict, or None if it is not readable JSON (a web page, a list, ...)."""
+        try:
+            j = r.json()
+        except Exception:
+            return None
+        return j if isinstance(j, dict) else None
 
     def _skip(self, p, m):
         now = self.now.isoformat()
@@ -2170,6 +2272,7 @@ class Brains:
                     self.log.append((role, p, m, "ok"))
                     return text, p, m
                 self._err(p, status or "network")
+                self.last_err[p] = (status or "network", m, clip(re.sub(r"\s+", " ", str(err or "")), 220))
                 low = re.sub(r"[\s_-]", "", (err or "").lower())
                 if status == 429 and any(s in low for s in ("perday", "daily", "tpd", "rpd")):
                     key = f"{p}|*" if p == "openrouter" else f"{p}|{m}"
@@ -2184,7 +2287,7 @@ class Brains:
                 if status in (401, 403):
                     self.down.add(p)
                     break
-                if status in (0, 200, 408, 429, 500, 502, 503, 504) and attempt < 2:
+                if status in (0, 200, "empty", "unreadable", 408, 429, 500, 502, 503, 504) and attempt < 2:
                     wait = (2, 6)[attempt] + random.random()
                     try:
                         if retry_after:
@@ -2595,7 +2698,7 @@ def inspect(brains, x, d, finals, plan, room, ctx_checks):
     text, prov, mdl = brains.ask("inspector", prompt, temperature=0.1, max_tokens=500, reasoning="medium")
     j = parse_json(text)
     if not j:
-        return {"decision": "PASS", "why": "inspector not answering", "model": None, "valid_codes": []}
+        return {"decision": "PASS", "why": "no AI answer, so only the code checks ran", "model": None, "valid_codes": []}
     dec = str(j.get("decision", "PASS")).upper().strip()
     raw = j.get("codes")
     raw = [raw] if isinstance(raw, str) else (raw if isinstance(raw, list) else [])
@@ -3012,7 +3115,7 @@ def update_books(st, mkt, f, now, notify):
             t.update({"status": "skipped", "why": res["why"], "fill": res.get("fill")})
             book["open"][mkt] = None
             if name == "system":
-                notify(f"{MARKETS[mkt]['name']} {t['d']}: skipped - {res['why']}.")
+                notify(f"⏭️ {MARKETS[mkt]['name']} {t['d']}: skipped - {res['why']}.")
             continue
         t["fill"] = res.get("fill")
         t["stop_now"] = res.get("stop")
@@ -3020,8 +3123,8 @@ def update_books(st, mkt, f, now, notify):
             if ev[0] not in t["events_sent"] and name == "system":
                 t["events_sent"].append(ev[0])
                 if ev[0] == "T2" and res["status"] == "open":
-                    notify(f"{MARKETS[mkt]['name']} {t['d']}: Target 2 reached at {pxm(ev[2], mkt)}. Close half and move "
-                           f"the stop to {pxm(res.get('t1', t['t'][0]), mkt)} (Target 1). Trail the rest.")
+                    notify(f"🎯 {MARKETS[mkt]['name']} {t['d']}: Target 2 reached at {pxm(ev[2], mkt)}. Close half and "
+                           f"move the stop to {pxm(res.get('t1', t['t'][0]), mkt)} (Target 1). Trail the rest.")
             elif ev[0] not in t["events_sent"]:
                 t["events_sent"].append(ev[0])
         if res["status"] == "closed":
@@ -3034,7 +3137,10 @@ def update_books(st, mkt, f, now, notify):
             book["closed"].append(t)
             book["open"][mkt] = None
             if name == "system":
-                notify(f"{MARKETS[mkt]['name']} {t['d']} closed ({res['why']}) at {pxm(res['exit'], mkt)}: "
+                icon = "✅" if t["r"] > 0.05 else ("❌" if t["r"] < -0.05 else "➖")
+                why_word = {"stop": "stop loss", "trail": "trailing stop", "target": "target", "time": "24-hour limit",
+                            "friday": "Friday close", "holiday": "holiday close"}.get(res["why"], res["why"])
+                notify(f"{icon} {MARKETS[mkt]['name']} {t['d']} closed ({why_word}) at {pxm(res['exit'], mkt)}: "
                        f"{t['r']:+.2f}R (about Rs {t['pnl_rs']:+,.0f} at Rs {t['risk_rs']:,.0f} risk).")
 
 
@@ -3151,57 +3257,573 @@ def current_weights(st, mkt, now):
 
 
 # =============================================================== messages
-def trade_card(mkt, x, res, finals, plan, risk_pct, room, events_up, tm, insp, debate, paper, risk_note):
+VOTE_ICON = {"BUY": "🟢", "SELL": "🔴", "WAIT": "⚪"}
+MKT_ICON = {"BTC": "🟠", "GOLD": "🟡", "OIL": "🛢"}
+SEC = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
+LINE = "━━━━━━━━━━━━━━━━"
+LAG_WORDS = ["1 day", "3 days", "1 week", "2 weeks"]          # the trend switch's 4 earlier closes
+FACT_WORDS = {"price": "price", "atr": "normal hourly move", "trend_switch": "1-hour trend", "trend_4h": "4-hour trend",
+              "daily_view": "daily view", "rsi": "RSI", "macd_hist": "MACD histogram",
+              "room_up_to_resistance_R": "room up to resistance (R)", "room_down_to_support_R": "room down to support (R)",
+              "momentum_state": "momentum", "funding_24h_pct": "funding 24h (%)", "oi_change_24h_pct": "open interest 24h (%)",
+              "fear_greed": "Fear & Greed", "nearest_resistance": "nearest resistance", "nearest_support": "nearest support",
+              "news_net_score": "news score", "news_up_stories": "good stories", "news_down_stories": "bad stories",
+              "gld_holdings_5d_change_pct": "GLD holdings 5 days (%)",
+              "big_funds_net_long_3y_rank_pct": "big funds rank (%)",
+              "front_minus_second_month_5d_change": "oil month spread change"}
+
+
+def esc(v):
+    """Text for a Telegram HTML message."""
+    return html.escape(str(v), quote=False)
+
+
+def strip_html(text):
+    return html.unescape(re.sub(r"</?(b|i|u|s|code|pre)>", "", text))
+
+
+def cap1(s):
+    s = str(s).strip()
+    return s[:1].upper() + s[1:] if s else s
+
+
+def dot(s):
+    s = str(s).strip()
+    return s if not s or s[-1] in ".!?)" else s + "."
+
+
+def _num(v, d=1, sign=False):
+    if not finite(v):
+        return "-"
+    return f"{float(v):+,.{d}f}" if sign else f"{float(v):,.{d}f}"
+
+
+def explain_agent(a, fa, ra, x, mkt, debate=None):
+    """Plain-English reason of one agent with its numbers, and 'wrong if' for a BUY/SELL.
+    Returns (why, wrong_if). When the AI explained this hour (checked by code), its words are added."""
+    m = MARKETS[mkt]
+    c, atr_v = x["c"], x["atr"]
+    data = fa.get("data") or {}
+    rid = fa.get("rule_id", "")
+    code_reason = dot(cap1(ra.get("reason", "")))
+    vote = fa.get("vote", "WAIT")
+    why, wrong = code_reason, None
+    if rid == "shock_bar":
+        return "Shock candle (range 2.5x the normal move or more) - no agent votes this hour.", None
+    if a == "trend":
+        lc = x.get("lag_closes") or []
+        parts = ", ".join(f"{w} {pxm(v, mkt)}" for w, v in zip(LAG_WORDS, lc) if finite(v))
+        why = (f"Price {pxm(c, mkt)} vs the closes {parts} ago: above {x['t_ups']}, below {x['t_downs']} "
+               "(3 of 4 = a trend).")
+        s = sorted(float(v) for v in lc if finite(v))
+        if len(s) == 4:
+            if x["trend"] == "UP":
+                wrong = f"an hourly close below {pxm(s[2], mkt)} (the up-trend switches off)"
+            elif x["trend"] == "DOWN":
+                wrong = f"an hourly close above {pxm(s[1], mkt)} (the down-trend switches off)"
+            else:
+                why += f" Turns UP above {pxm(s[2], mkt)}, DOWN below {pxm(s[1], mkt)}."
+        if rid == "trend.burst_wait":
+            why += " The last candle was a burst (2x the normal move) in the trend direction - wait one candle."
+    elif a == "daily_view":
+        ans, dwhy, dd = x["daily_view"]
+        slow, fast, wk = m["daily"]
+        if not dd:
+            why = "Not enough daily history yet - NEUTRAL (trades at half size)."
+        else:
+            phase = dwhy.split(" (")[0]
+            fm = re.search(r"fast (up|down)", dwhy)
+            dc, sv = dd["daily_close"], dd[f"close_{slow}_days_ago"]
+            wc, wma = dd["weekly_close"], dd[f"weekly_avg_{wk}"]
+            why = (f"{phase} phase: close {pxm(dc, mkt)} is {'above' if dc > sv else 'below'} {slow} days ago "
+                   f"({pxm(sv, mkt)}); {fast}-day check {fm.group(1) if fm else '-'}; weekly close {pxm(wc, mkt)} "
+                   f"{'above' if wc > wma else 'below'} its {wk}-week average {pxm(wma, mkt)}. "
+                   + {"UP": "Only BUY trades allowed.", "DOWN": "Only SELL trades allowed.",
+                      "NEUTRAL": "Both sides allowed, half size."}.get(ans, ""))
+            if ans == "UP":
+                wrong = f"a weekly close below {pxm(wma, mkt)}"
+            elif ans == "DOWN":
+                wrong = f"a weekly close above {pxm(wma, mkt)}"
+    elif a == "momentum":
+        r, rp, hst, hp = x["rsi"], x["rsi_prev"], x["hist"], x["hist_prev"]
+        chg = (c / x["close_24"] - 1) * 100 if finite(x.get("close_24")) and x["close_24"] else None
+        state = ra.get("reason", "").split("; RSI")[0]
+        why = (f"RSI {_num(r)} (last hour {_num(rp)}), MACD histogram {fnum(hst, 2 if abs(hst) < 100 else 0)} "
+               f"({'rising' if finite(hst, hp) and hst > hp else 'falling'}), price {_num(chg, 2, True)}% in 24 hours. "
+               f"{dot(cap1(state))}")
+        if ra.get("vote") == "BUY" and vote == "BUY":
+            wrong = "RSI falls back below 50"
+        elif ra.get("vote") == "SELL" and vote == "SELL":
+            wrong = "RSI rises back above 50"
+    elif a == "volatility":
+        q95 = x.get("atr_q95")
+        why = (f"Normal hourly move (ATR) {pxm(atr_v, mkt)} = {atr_v / c * 100:.2f}% of price"
+               + (f" (danger level {pxm(q95, mkt)})" if finite(q95) else "") + f". {code_reason}")
+        if rid == "vol.expanding_up":
+            wrong = f"a close back below {pxm(x['hi24_prev'], mkt)} (the 24-hour high)"
+        elif rid == "vol.expanding_down":
+            wrong = f"a close back above {pxm(x['lo24_prev'], mkt)} (the 24-hour low)"
+        elif rid == "vol.release":
+            wrong = (f"a close back inside the bands (below {pxm(x['bb_up'], mkt)})" if vote == "BUY" else
+                     f"a close back inside the bands (above {pxm(x['bb_lo'], mkt)})")
+    elif a == "levels":
+        strong = [z for z in x["zones"] if z["strong"]]
+        sup = max((z for z in strong if z["hi"] < c), key=lambda z: z["hi"], default=None)
+        res = min((z for z in strong if z["lo"] > c), key=lambda z: z["lo"], default=None)
+        bits = []
+        if sup:
+            bits.append(f"support zone {pxm(sup['lo'], mkt)} - {pxm(sup['hi'], mkt)} ({sup['pts']:.1f} points, top "
+                        f"{(c - sup['hi']) / atr_v:.1f}x ATR below)")
+        if res:
+            bits.append(f"resistance zone {pxm(res['lo'], mkt)} - {pxm(res['hi'], mkt)} ({res['pts']:.1f} points, "
+                        f"bottom {(res['lo'] - c) / atr_v:.1f}x ATR above)")
+        why = ("Strong levels (3+ points): " + "; ".join(bits) + ". " if bits else
+               "No strong level (3+ points) near the price. ") + code_reason
+        st_ = ra.get("struct")
+        if ra.get("vote") in ("BUY", "SELL") and vote == ra.get("vote") and finite(st_):
+            up = vote == "BUY"
+            if ra.get("signal") == "sweep":
+                wrong = f"price goes {'below' if up else 'above'} {pxm(st_, mkt)} (past the sweep's extreme)"
+            elif ra.get("signal") == "eia_fade":
+                wrong = f"price goes {'below' if up else 'above'} {pxm(st_, mkt)} (past the spike's extreme)"
+            else:
+                wrong = (f"an hourly close back {'below' if up else 'above'} {pxm(st_, mkt)} (back "
+                         f"{'under' if up else 'over'} the whole zone - the {'breakout' if up else 'breakdown'} failed)")
+    elif a == "special":
+        sd = ra.get("data") or {}
+        if mkt == "BTC":
+            bits = []
+            if finite(sd.get("funding_now_per_8h_pct")):
+                extra = []
+                if finite(sd.get("funding_24h_avg_per_8h_pct")):
+                    extra.append(f"24h average {sd['funding_24h_avg_per_8h_pct']:.4f}%")
+                if finite(sd.get("funding_30d_rank_pct")):
+                    extra.append(f"higher than {sd['funding_30d_rank_pct']:.0f}% of the last 30 days")
+                bits.append(f"funding {sd['funding_now_per_8h_pct']:.4f}% per 8 hours"
+                            + (f" ({', '.join(extra)})" if extra else ""))
+            oi = [f"{_num(sd.get(k), 1, True)}% in {w}" for k, w in (("oi_change_4h_pct", "4h"), ("oi_change_24h_pct", "24h"))
+                  if finite(sd.get(k))]
+            if oi:
+                bits.append("open interest " + ", ".join(oi))
+            if finite(sd.get("price_change_4h_pct")):
+                bits.append(f"price {_num(sd['price_change_4h_pct'], 1, True)}% in 4h")
+            why = (cap1("; ".join(bits)) + f" ({sd.get('venues', '?')} exchanges). " if bits else "") + code_reason
+        else:
+            bits = []
+            if finite(sd.get("cot_net_long_3y_rank_pct")):
+                bits.append(f"big funds' net buying is higher than {sd['cot_net_long_3y_rank_pct']:.0f}% of the last "
+                            "3 years (COT)")
+            if finite(sd.get("gld_holdings_5d_change_pct")):
+                bits.append(f"GLD gold holdings {_num(sd['gld_holdings_5d_change_pct'], 2, True)}% in 5 days")
+            if finite(sd.get("spread_5d_change")):
+                bits.append(f"front month minus next month {_num(sd.get('front_minus_second_month'), 2, True)} "
+                            f"({_num(sd['spread_5d_change'], 2, True)} in 5 days)")
+            why = (cap1("; ".join(bits)) + ". " if bits else "") + code_reason
+        if ra.get("blocks"):
+            why += f" Blocks {' and '.join(ra['blocks'])} trades."
+    elif a == "macro":
+        mc = x.get("macro") or {}
+        z = mc.get("z") or {}
+        names = {"BTC": [("nasdaq", "Nasdaq"), ("dollar", "dollar")], "GOLD": [("dollar", "dollar"), ("yield10", "10-yr yield")],
+                 "OIL": [("sp500", "S&P 500"), ("copper", "copper")]}[mkt]
+        bits = [f"{w} {_num(z.get(k), 1, True)}" for k, w in names if finite(z.get(k))]
+        if bits and rid not in ("mac.btc_weekend", "mac.stale"):
+            why = ("24-hour moves (1.0 = a normal day's move): " + ", ".join(bits)
+                   + (f"; VIX {mc['vix']:.1f}" if finite(mc.get("vix")) else "")
+                   + ("; markets are nervous (risk-off)" if mc.get("risk_off") else "") + f". {code_reason}")
+    elif a == "news":
+        nd = fa.get("data") or {}
+        if rid == "news.code" and fa.get("ai") == "no AI key":
+            why = "No AI key added, so nobody reads the news - WAIT."
+        elif rid == "news.code" and fa.get("ai") in ("no AI this hour", None):
+            why = "Read by the AI only when a trade is possible (saves the free AI limit) - WAIT this hour."
+        elif rid == "news.code":
+            why = dot(cap1(fa.get("reason", "")))
+        elif rid == "news.none":
+            why = "No fresh stories in the last 90 minutes."
+        elif fa.get("stories") is not None or "news_net_score" in nd:
+            why = (f"Good-news score {_num(nd.get('news_up_score'))}, bad-news score {_num(nd.get('news_down_score'))}, "
+                   f"net {_num(nd.get('news_net_score'), 1, True)} (a vote needs 3 or more). {dot(cap1(fa.get('reason', '')))}")
+            for s in (fa.get("stories") or [])[:2]:
+                lab = s.get("label") or {}
+                arrow = {"UP": "⬆️", "DOWN": "⬇️"}.get(lab.get("direction"), "➖")
+                why += f"\n   {arrow} {clip(s.get('title', ''), 95)}"
+        else:
+            why = dot(cap1(fa.get("reason", "")))
+    elif a == "mood":
+        md = ra.get("data") or {}
+        if mkt != "BTC":
+            why = f"There is no tested mood index for {m['name']} - always WAIT."
+        elif finite(md.get("fear_greed")):
+            why = (f"Fear & Greed {md['fear_greed']:.0f}/100" + (f" (30-day average {md['fear_greed_30d_avg']:.0f})"
+                                                                  if finite(md.get("fear_greed_30d_avg")) else "")
+                   + f". {code_reason}")
+    elif a in ("bull", "bear"):
+        side_word = "buy" if a == "bull" else "sell"
+        dbt = (debate or {}).get(a)
+        if rid.endswith(".ai") and dbt and dbt.get("args"):
+            kn = set(dbt.get("knocked", []))
+            args = [f"{FACT_WORDS.get(g['fact'], g['fact'])} = {fact_value(g['value'], g['fact'], mkt)}"
+                    f"{' (knocked down)' if i in kn else ''}" for i, g in enumerate(dbt["args"])]
+            why = (f"AI debater ({dbt.get('model', '')}) argued: " + "; ".join(args) + ". "
+                   + ("Needs 2 standing arguments and 2R of room to vote." if vote == "WAIT" else ""))
+        elif rid.endswith(".invalid"):
+            why = dot(cap1(fa.get("reason", "")))
+        else:
+            rd = ra.get("data") or {}
+            key = "room_up_to_resistance_R" if a == "bull" else "room_down_to_support_R"
+            room = rd.get(key)
+            room_txt = ("price is inside a strong level (no room yet)" if zone_around(x) else
+                        "no strong level in the way" if finite(room) and room >= 9.9 else
+                        f"{_num(room)}R room {'up' if a == 'bull' else 'down'} to the next strong level")
+            why = (f"{rd.get('supporting_facts', 0)} of 5 {side_word} facts true (trends, daily view, RSI, MACD); "
+                   f"{room_txt} (needs 2+ facts and 2R).")
+    elif a == "time_machine":
+        td = ra.get("data") or {}
+        if td.get("cases", 0) >= 30 and finite(td.get("avg_R")):
+            why = (f"{td['cases']} similar past setups: won {td['hit_rate_pct']:.0f}% (break-even "
+                   f"{td['break_even_pct']:.0f}%), average {td['avg_R']:+.2f}R. Confirms at +0.15R, blocks below -0.10R.")
+        if ra.get("blocks"):
+            why += f" Blocks {' and '.join(ra['blocks'])}."
+    model = fa.get("model", "code")
+    if fa.get("ai") == "checked" and model != "code" and a not in ("news", "bull", "bear") and fa.get("reason"):
+        why += f"\n   🤖 {clip(fa['reason'], 170)}"
+    return why, wrong
+
+
+def fact_value(v, name, mkt):
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return str(v)
+    if name in ("price", "atr", "nearest_support", "nearest_resistance"):
+        return pxm(v, mkt)
+    return f"{v:,.2f}".rstrip("0").rstrip(".") if isinstance(v, float) else str(v)
+
+
+def flag_words(fa, ra):
+    f = fa.get("flag", "")
+    if f == "own judgement":
+        return f" (AI's own view - its rule said {ra.get('vote', 'WAIT')})"
+    if f == "corrected":
+        return " (AI said otherwise - corrected to the rule)"
+    return ""
+
+
+def plain_reasons(pre, dec, x, events_active, mkt):
+    """Every reason the trade did not form, in plain words."""
+    out = []
+    gate = x["daily_view"][0]
+    for p in pre:
+        if p == "no trend":
+            out.append("No trend: price is not above (or below) 3 of the 4 earlier closes.")
+        elif p == "event window" and events_active:
+            out.append(f"Big news event: {events_active['label']} at {ist_str(events_active['time'], '%a %H:%M')} - no new "
+                       f"trades from {ist_str(events_active['start'], '%H:%M')} to {ist_str(events_active['end'], '%H:%M')}.")
+        elif p == "extreme volatility":
+            out.append("Price is moving too wildly (a shock candle or the top 5% of moves) - no new trades.")
+        elif p.startswith("burst"):
+            out.append("The last candle was unusually big - wait one candle.")
+        elif p == "daily view against the trend":
+            out.append(f"The daily view is {gate} but the hourly trend is {x['trend']} - no trades against the daily view.")
+        elif p == "cascade cooldown":
+            out.append("A liquidation cascade just happened - no new trades for 2 candles.")
+        elif p.startswith("no valid stop"):
+            out.append("No safe stop: " + dot(p.split(":", 1)[-1].strip()))
+        elif p.startswith("costs "):
+            out.append(f"Fees would be {p[6:]} of the risk (limit {CFG['MAX_COST_R']}R) - the stop is too close for "
+                       "the fees.")
+        elif p.startswith("strong zone only"):
+            z_in = zone_around(x)
+            if z_in:
+                out.append(f"Price is sitting inside a strong level ({pxm(z_in['lo'], mkt)} - {pxm(z_in['hi'], mkt)}) - "
+                           "no room for the target until it breaks out.")
+            else:
+                out.append(f"A strong level is only {p.split('only', 1)[1].strip().replace(' away', '')} away - not "
+                           "enough room for the target.")
+        else:
+            out.append(dot(cap1(p)))
+    if not pre and dec.get("d"):
+        d = dec["d"]
+        votes_ok = dec["side"] >= CFG["MIN_SIDE"] and dec["opp"] <= CFG["MAX_OPPOSITE"] and \
+            dec["answered"] >= CFG["MIN_ANSWERED"]
+        if not votes_ok:
+            out.append(dot(cap1(dec.get("why", ""))))
+        if dec.get("blocks"):
+            if votes_ok:
+                out.append(f"{d} passed the vote ({dec['side']:g} for, {dec['opp']:g} against), but:")
+            for _, b in dec["blocks"]:
+                out.append(dot(cap1(b)))
+        if dec.get("why", "").startswith("risk officer"):
+            out.append(dot(cap1(dec["why"])))
+        if dec.get("why", "").startswith("inspector blocked"):
+            out.append(dot(cap1(dec["why"])))
+    return out or ["-"]
+
+
+def zone_around(x):
+    """The strong zone the price is sitting inside, or None."""
+    for z in x["zones"]:
+        if z["strong"] and z["lo"] <= x["c"] <= z["hi"]:
+            return z
+    return None
+
+
+def room_lines(x, mkt):
+    z_in = zone_around(x)
+    if z_in:
+        return [f"Price is inside a strong level ({pxm(z_in['lo'], mkt)} - {pxm(z_in['hi'], mkt)}, "
+                f"{z_in['pts']:.1f} points) - no room either way until it breaks out."]
+    out = []
+    for d, word in (("BUY", "Up"), ("SELL", "Down")):
+        p = x["plan_buy"] if d == "BUY" else x["plan_sell"]
+        dist = p["dist"] if p.get("valid") else 1.5 * x["atr"]
+        room, z = room_check(x["zones"], d, x["c"], dist)
+        kind = "resistance" if d == "BUY" else "support"
+        if room is None:
+            out.append(f"{word}: no strong {kind} in the way")
+        else:
+            out.append(f"{word}: strong {kind} zone {pxm(z['lo'], mkt)} - {pxm(z['hi'], mkt)} starts {room:.1f}R away")
+    return out
+
+
+def plan_line(x, mkt):
+    d = {"UP": "BUY", "DOWN": "SELL"}.get(x["trend"])
+    if not d:
+        return "No trade plan (no trend)."
+    p = x["plan_buy"] if d == "BUY" else x["plan_sell"]
+    if not p.get("valid"):
+        return f"No {d} plan: {p.get('why', 'no valid stop')}."
+    return (f"If a {d} formed now: entry {pxm(p['entry'], mkt)}, stop {pxm(p['stop'], mkt)} "
+            f"({p['dist'] / p['atr']:.1f}x ATR), target {pxm(p['t'][1], mkt)} (2R), fees {p['cost_r']:.2f}R.")
+
+
+def code_check_lines(finals, use_ai, pre):
+    if not use_ai:
+        if not pre:
+            return ["No AI key added - all votes are the agents' code rules."]
+        return ["AI not asked this hour (no trade was possible) - all votes are the agents' code rules, "
+                "nothing to correct."]
+    flags = {}
+    for a in VOTERS:
+        flags.setdefault(finals[a].get("flag", ""), []).append(PRETTY[a])
+    asked = [a for a in VOTERS if a not in NO_AI]
+    explained = [a for a in asked if finals[a].get("ai") in ("checked", "labels by AI, score by code")]
+    if not explained:
+        return ["The AI brains did not answer this hour - every vote is the agent's own code rule."]
+    out = [f"AI answers checked by code: {len(explained)} of {len(asked)} agents (the others used their code rule)."]
+    if flags.get("corrected"):
+        out.append("Corrected (AI vote went against the agent's own rule): " + ", ".join(flags["corrected"]) + ".")
+    if flags.get("AI rejected"):
+        out.append("AI answer rejected (wrong numbers or format) - rule used: " + ", ".join(flags["AI rejected"]) + ".")
+    if flags.get("own judgement"):
+        out.append("AI's own view kept (rule was neutral): " + ", ".join(flags["own judgement"]) + ".")
+    if flags.get("invalid"):
+        out.append("Debate answer invalid - vote set to WAIT: " + ", ".join(flags["invalid"]) + ".")
+    if len(out) == 1:
+        out.append("Every AI vote matched its rule - nothing to correct.")
+    return out
+
+
+def inspector_lines(st, x, dec, insp_txt, events_up, mkt):
+    out = []
+    status = st.inspector["status"].get(mkt, "test")
+    if insp_txt and insp_txt != "not needed":
+        out.append(f"Decision: {insp_txt}")
+    else:
+        out.append("Not needed - it checks only a trade that passed every vote and rule.")
+    out.append(f"Mode: {'LIVE on ' + MARKETS[mkt]['name'] + ' (can block)' if status == 'live' else 'TEST on ' + MARKETS[mkt]['name'] + ' (blocks are only recorded)'}.")
+    age = x["data_age_min"] - MARKETS[mkt]["data_delay_min"]
+    mc = x.get("macro") or {}
+    macro_ok = bool(mc.get("fresh")) or (mkt == "BTC" and x.get("btc_weekend_macro"))
+    soon = [e for e in events_up if 0 <= (e["time"] - pd.Timestamp(x["now"])).total_seconds() <= 3600]
+    checks = [f"prices fresh {'✅' if age <= CFG['DATA_MAX_AGE_MIN'] else '❌'}",
+              f"macro fresh {'✅' if macro_ok else '❌'}",
+              f"no big event within 1 hour {'✅' if not soon else '❌'}"]
+    out.append("Safety checks: " + " · ".join(checks))
+    return out
+
+
+def report_trade_lines(st, mkt, x, now):
+    out = []
+    t = st.books["system"]["open"].get(mkt)
+    if t:
+        fill = t.get("fill")
+        sgn = 1 if t["d"] == "BUY" else -1
+        r_now = (x["c"] - fill) * sgn / t["dist"] if finite(fill) and t.get("dist") else None
+        out.append(f"Open {MARKETS[mkt]['name']} trade: {VOTE_ICON[t['d']]} {t['d']} from "
+                   f"{pxm(fill if finite(fill) else t['entry_plan'], mkt)}, stop now "
+                   f"{pxm(t.get('stop_now') or t['stop0'], mkt)}"
+                   + (f", now {r_now:+.2f}R" if finite(r_now) else ", waiting for the fill")
+                   + (" (half closed at T2)" if "T2" in (t.get("events_sent") or []) else ""))
+    else:
+        out.append(f"Open {MARKETS[mkt]['name']} trade: none")
+    day = to_ist(now).strftime("%Y-%m-%d")
+    closed = [r for r in st.books["system"]["closed"] if r.get("exit_day") == day]
+    opened = [r for r in st.books["system"]["closed"] + [v for v in st.books["system"]["open"].values() if v]
+              if r.get("open_day") == day]
+    tot_r = sum(r.get("r", 0) for r in closed)
+    tot_rs = sum(r.get("pnl_rs", 0) for r in closed)
+    out.append(f"Today (India day), all markets: {len(opened)} opened, {len(closed)} closed, result {tot_r:+.2f}R "
+               f"(Rs {tot_rs:+,.0f})")
+    return out
+
+
+def other_markets_line(st, mkt):
+    last = st.misc.get("last_decision", {})
+    bits = []
+    for o in MARKETS:
+        if o == mkt or o not in last:
+            continue
+        r = last[o]
+        dec = str(r.get("decision", ""))
+        word = {"WAIT": "no trade", "MARKET CLOSED": "market closed", "NO DATA": "no data"}.get(dec, dec)
+        price = f" {pxm(r['price'], o)}" if finite(r.get("price")) else ""
+        bits.append(f"{MKT_ICON[o]} {MARKETS[o]['name']}{price}: {word} ({ist_str(r['time'], '%H:%M')})")
+    return " · ".join(bits)
+
+
+def build_report(st, mkt, x, rules, finals, dec, pre, weights, events_active, events_up, insp_txt, final_trade,
+                 use_ai, debate, now):
+    """The full report of one market (Telegram HTML), in numbered sections."""
+    m = MARKETS[mkt]
+    end = pd.Timestamp(x["f"].index[-1]) + pd.Timedelta(hours=1)
+    trend_d = {"UP": "BUY", "DOWN": "SELL"}.get(x["trend"])
+    L = [f"{MKT_ICON[mkt]} <b>{esc(m['name'].upper())} - REPORT</b>",
+         f"Price {esc(pxm(x['c'], mkt))} · candle closed {esc(ist_str(end, '%d %b %H:%M'))}"]
+    other = other_markets_line(st, mkt)
+    if other:
+        L.append(f"🌐 Others: {esc(other)}")
+    L.append(LINE)
+    # 1 decision
+    L.append(f"{SEC[0]} <b>DECISION</b>")
+    if final_trade:
+        L.append(f"✅ <b>TRADE: {dec['d']}</b> - the trade card was sent just before this report.")
+    else:
+        L.append("⛔ <b>NO TRADE</b>")
+        for i, r in enumerate(plain_reasons(pre, dec, x, events_active, mkt), 1):
+            L.append(f"{i}. {esc(r)}")
+    # 2 market phase
+    L += ["", f"{SEC[1]} <b>MARKET PHASE</b>"]
+    ups_or = x["t_ups"] if x["trend"] != "DOWN" else x["t_downs"]
+    dv = x["daily_view"]
+    phase = dv[1].split(" (")[0] if dv[2] else "not enough history"
+    vol_word = ("EXTREME" if rules["volatility"]["rule_id"] == "vol.extreme" else
+                "squeezed (a move is coming)" if rules["volatility"]["rule_id"] == "vol.compressed" else "normal")
+    L += [f"1. Trend (1 hour): <b>{x['trend']}</b>" + (f" ({ups_or} of 4 checks)" if x["trend"] != "NONE" else ""),
+          f"2. Trend (4 hours): {x['trend4']}",
+          f"3. Daily view: <b>{dv[0]}</b> ({esc(phase)})",
+          f"4. Volatility: {vol_word} (normal hourly move {esc(pxm(x['atr'], mkt))} = {x['atr'] / x['c'] * 100:.2f}%)",
+          f"5. Power Trend (your rule, test only): {x.get('power_trend', 'NONE')}"]
+    # 3 room
+    L += ["", f"{SEC[2]} <b>ROOM TO MOVE</b>"]
+    L += [f"{i}. {esc(r)}" for i, r in enumerate(room_lines(x, mkt) + [plan_line(x, mkt)], 1)]
+    L.append("<i>1R = the stop distance; a trade needs 1R+ of room (2R is best).</i>")
+    # 4 votes
+    cnt = {"BUY": 0, "SELL": 0, "WAIT": 0}
+    for a in VOTERS:
+        cnt[finals[a]["vote"]] = cnt.get(finals[a]["vote"], 0) + 1
+    L += ["", f"{SEC[3]} <b>VOTES</b> (11 voting agents)"]
+    L.append(f"🔴 SELL {cnt['SELL']} · 🟢 BUY {cnt['BUY']} · ⚪ WAIT {cnt['WAIT']}")
+    if trend_d and any(abs(weights.get(a, 1.0) - 1.0) > 1e-9 for a in VOTERS):
+        L.append(f"Weighted {trend_d} score: {dec['side']:g}")
+    L.append(f"<i>Needs {CFG['MIN_SIDE']:g}+ on the trend side, max {CFG['MAX_OPPOSITE']} against, "
+             f"{CFG['MIN_ANSWERED']} of 12 answering. Daily view = gate, not a vote.</i>")
+    # 5 agents
+    L += ["", f"{SEC[4]} <b>WHAT EACH AGENT SAID</b>"]
+    for i, a in enumerate(AGENTS, 1):
+        fa, ra = finals[a], rules[a]
+        if a == "daily_view":
+            head = f"<b>{i}. Daily view</b> (gate) - {fa.get('gate', x['daily_view'][0])}"
+        else:
+            w = weights.get(a, 1.0)
+            head = (f"<b>{i}. {esc(PRETTY[a])}</b> - {VOTE_ICON.get(fa['vote'], '')} {fa['vote']}"
+                    + esc(flag_words(fa, ra)) + (f" · weight {w:.2f}" if abs(w - 1.0) > 1e-9 else ""))
+        why, wrong = explain_agent(a, fa, ra, x, mkt, debate)
+        L.append(head)
+        L.append(esc(why))
+        if wrong and a == "daily_view":
+            L.append(f"❗ Changes if: {esc(wrong)}")
+        elif wrong and fa["vote"] in ("BUY", "SELL"):
+            L.append(f"❗ Wrong if: {esc(wrong)}")
+        L.append("")
+    L.pop()
+    # 6 code check
+    L += ["", f"{SEC[5]} <b>CODE CHECK</b>"]
+    L += [f"{i}. {esc(s)}" for i, s in enumerate(code_check_lines(finals, use_ai, pre), 1)]
+    # 7 inspector
+    L += ["", f"{SEC[6]} <b>AI INSPECTOR</b>"]
+    L += [f"{i}. {esc(s)}" for i, s in enumerate(inspector_lines(st, x, dec, insp_txt, events_up, mkt), 1)]
+    # 8 trades
+    L += ["", f"{SEC[7]} <b>TRADES</b> (paper)"]
+    L += [f"{i}. {esc(s)}" for i, s in enumerate(report_trade_lines(st, mkt, x, now), 1)]
+    # 9 events
+    L += ["", f"{SEC[8]} <b>NEXT 24 HOURS</b>"]
+    if events_up:
+        L += [f"{i}. 📅 {esc(e['label'])} - {esc(ist_str(e['time'], '%a %d %b %H:%M'))}" for i, e in
+              enumerate(events_up[:4], 1)]
+    else:
+        L.append("No big scheduled event.")
+    L += [LINE, "<i>Paper trades only. Not financial advice.</i>"]
+    return "\n".join(L)
+
+
+def trade_card(mkt, x, res, finals, plan, risk_pct, room, events_up, tm, insp, debate, paper, risk_note, rules=None):
+    """The special card sent the moment a trade forms (Telegram HTML)."""
     m = MARKETS[mkt]
     d = res["d"]
+    rules = rules or finals
     usdinr = x.get("usdinr", CFG["USDINR_DEFAULT"])
     risk_rs = risk_pct / 100 * CFG["CAPITAL"]
     tag = "PAPER" if paper else "SIGNAL"
     if m["paper_only"]:
         tag = "SIGNAL ONLY (paper) - account too small for MCX crude"
     nxt = pd.Timestamp(x["f"].index[-1]) + pd.Timedelta(hours=1)
-    lines = [f"AI TEAM {VERSION} - {m['name'].upper()} {d}  [{tag}]",
-             f"Signal from the candle that closed at {ist_str(nxt, '%d %b %H:%M')}",
-             f"Entry: about {pxm(plan['entry'], mkt)} - enter now, a limit order keeps costs low (the paper result "
-             f"uses the open of the {ist_str(next_open_hour(mkt, x['fill_after']), '%H:%M')} candle)",
-             f"Stop loss: {pxm(plan['stop'], mkt)} ({plan['dist'] / plan['atr']:.1f}x the normal hourly move)",
-             "Targets: " + " | ".join(f"T{i + 1} {pxm(v, mkt)}" for i, v in enumerate(plan["t"])),
-             f"Plan: nothing at T1. At T2 close half and move the stop to T1. Trail the rest {m['trail_atr']}x ATR below "
-             f"the best price. Close all at T4 or after 24 hours." if res.get("kind") != "level" else
-             "Plan: level trade - close everything at T2. Close after 24 hours if neither is hit.",
-             f"Risk: Rs {risk_rs:,.0f} ({risk_pct:.2f}% of Rs {CFG['CAPITAL']:,.0f})"]
+    entry_how = ("use a LIMIT order at this price (Delta fee 0.02% instead of 0.05%); if it is not filled within "
+                 "15 minutes, skip the trade" if mkt == "BTC" else "enter now; a limit order keeps costs low")
+    risk_txt = f"Rs {risk_rs:,.0f} ({risk_pct:.2f}% of Rs {CFG['CAPITAL']:,.0f})"
     if mkt == "BTC":
         per = plan["dist"] * CFG["BTC_CONTRACT"] * usdinr
         n = int(risk_rs // per) if per > 0 else 0
-        lines[-1] += (f" = about {n} contract(s) of 0.001 BTC (Rs {per:,.0f} risk each)" if n >= 1 else
-                      f" - too small for even 1 contract of 0.001 BTC (needs Rs {per:,.0f}); paper only")
+        risk_txt += (f" = about {n} contract(s) of 0.001 BTC (Rs {per:,.0f} risk each)" if n >= 1 else
+                     f" - too small for even 1 contract of 0.001 BTC (needs Rs {per:,.0f}); paper only")
     elif mkt == "GOLD":
-        lines[-1] += " - check your MCX lot size before trading"
-    if risk_note:
-        lines.append("Note: " + risk_note)
-    lines.append(f"Votes: {res['side']:g} {d} | {res['opp']:g} against | {res['answered']} of 12 answered "
-                 "(need 6 with at most 1 against)")
-    lines.append(f"Trend: {x['trend']} ({x['t_ups'] if d == 'BUY' else x['t_downs']} of 4 checks) | Daily view: "
-                 f"{x['daily_view'][0]} | Time machine: {tm}")
-    lines.append(f"Room to the next strong level: {'none in the way' if room is None else f'{room:.1f}R'}"
-                 + (" (lower confidence: under 2R)" if room is not None and room < 2 else ""))
-    lines.append(f"Inspector: {insp}")
+        risk_txt += " - check your MCX lot size before trading"
+    plan_txt = (f"Nothing at T1. At T2 close half and move the stop to T1. Trail the rest {m['trail_atr']}x ATR behind "
+                "the best price. Close all at T4 or after 24 hours." if res.get("kind") != "level" else
+                "Level trade - close everything at T2. Close after 24 hours if neither is hit.")
+    L = ["🚨🚨 <b>NEW TRADE</b> 🚨🚨",
+         f"{VOTE_ICON[d]} <b>{esc(m['name'].upper())} - {d}</b>  [{esc(tag)}]",
+         f"Signal from the candle that closed at {esc(ist_str(nxt, '%d %b %H:%M'))}", LINE,
+         f"<b>1. Entry:</b> about {esc(pxm(plan['entry'], mkt))} - {esc(entry_how)} (the paper result uses the open "
+         f"of the {esc(ist_str(next_open_hour(mkt, x['fill_after']), '%H:%M'))} candle)",
+         f"<b>2. Stop loss:</b> {esc(pxm(plan['stop'], mkt))} ({plan['dist'] / plan['atr']:.1f}x the normal hourly move)",
+         "<b>3. Targets:</b> " + " · ".join(f"T{i + 1} {esc(pxm(v, mkt))}" for i, v in enumerate(plan["t"])),
+         f"<b>4. Plan:</b> {esc(plan_txt)}",
+         f"<b>5. Risk:</b> {esc(risk_txt)}",
+         f"<b>6. Votes:</b> {res['side']:g} {d} · {res['opp']:g} against · {res['answered']} of 12 answered "
+         f"(need {CFG['MIN_SIDE']:g}, at most {CFG['MAX_OPPOSITE']} against)",
+         f"<b>7. Trend:</b> {x['trend']} ({x['t_ups'] if d == 'BUY' else x['t_downs']} of 4 checks) · Daily view: "
+         f"{x['daily_view'][0]} · Time machine: {esc(tm)}",
+         f"<b>8. Room</b> to the next strong level: {'none in the way' if room is None else f'{room:.1f}R'}"
+         + (" (lower confidence: under 2R)" if room is not None and room < 2 else ""),
+         f"<b>9. AI Inspector:</b> {esc(insp)}"]
     if events_up:
-        lines.append("Events in the next 24h: " + "; ".join(f"{e['label']} {ist_str(e['time'], '%a %H:%M')}"
-                                                            for e in events_up[:3]))
-    lines += ["", "--- Agents ---"]
-    for i, a in enumerate(AGENTS):
-        v = finals[a]
-        flag = f" [{v['flag']}]" if v.get("flag") else ""
-        lines.append(f"{i + 1}. {PRETTY[a]} ({v.get('model', 'code')}): {v['vote']}{flag} - {clip(v['reason'], 160)}")
-    for side in ("bull", "bear"):
-        dbt = debate.get(side)
-        if dbt and dbt.get("args"):
-            kn = set(dbt.get("knocked", []))
-            pts = [f"{a['fact']}={a['value']}{' (knocked down)' if i in kn else ''}" for i, a in enumerate(dbt["args"])]
-            lines.append(f"Debate - {side} ({dbt['model']}): " + "; ".join(pts))
-    lines += ["", "Paper trades only. Not financial advice."]
-    return "\n".join(lines)
+        L.append("<b>10. Events</b> in the next 24h: " + esc("; ".join(
+            f"{e['label']} {ist_str(e['time'], '%a %H:%M')}" for e in events_up[:3])))
+    if risk_note:
+        L.append(f"⚠️ <b>Note:</b> {esc(risk_note)}")
+    L += ["", "<b>WHY THE AGENTS SAY THIS</b>"]
+    for i, a in enumerate(AGENTS, 1):
+        fa = finals[a]
+        why, _ = explain_agent(a, fa, rules.get(a, fa), x, mkt, debate)
+        first = why.split("\n")[0]
+        if fa.get("flag") == "own judgement" and fa.get("reason"):
+            first = "AI: " + str(fa["reason"])          # its rule was neutral: the AI's own (checked) reason
+        vote_txt = (f"gate {fa.get('gate', x['daily_view'][0])}" if a == "daily_view" else
+                    f"{VOTE_ICON.get(fa['vote'], '')} {fa['vote']}")
+        L.append(f"{i}. <b>{esc(PRETTY[a])}</b> {vote_txt}{esc(flag_words(fa, rules.get(a, fa)))} - "
+                 f"{esc(clip(first, 230))}")
+    L += [LINE, "<i>Paper trades only. Not financial advice.</i>"]
+    return "\n".join(L)
 
 
 def tlen(s):
@@ -3209,35 +3831,85 @@ def tlen(s):
     return len(s.encode("utf-16-le")) // 2
 
 
-def tg_send(text):
-    tok, chat = os.getenv("TG_TOKEN", ""), os.getenv("TG_CHAT", "")
-    if DRY_RUN or not (tok and chat):
-        print("\n----- TELEGRAM -----\n" + text + "\n--------------------\n")
-        return not DRY_RUN and False
-    parts, cur = [], ""                             # Telegram allows 4,096 characters (UTF-16 units) a message
-    for line in text.split("\n"):
-        while tlen(line) > 3500:                    # one very long line: send what is waiting, then cut the line
-            if cur:
-                parts.append(cur)
-                cur = ""
-            parts.append(line[:1700])               # 1,700 characters are at most 3,400 UTF-16 units
-            line = line[1700:]
-        if tlen(cur) + tlen(line) + 1 > 3500:
+def split_message(text, limit=3900, measure=None):
+    """Parts of at most "limit" units as Telegram counts them (it allows 4,096 UTF-16 units after the HTML tags are
+    read; 'measure' gives that count). Cuts between paragraphs (blank lines) when it can, else between lines; a
+    single very long line is cut by length."""
+    measure = measure or tlen
+    parts, cur = [], ""
+    for block in text.split("\n\n"):
+        piece = block if not cur else "\n\n" + block
+        if measure(cur + piece) <= limit:
+            cur += piece
+            continue
+        if cur:
             parts.append(cur)
             cur = ""
-        cur += line + "\n"
-    parts.append(cur)
+        if measure(block) <= limit:
+            cur = block
+            continue
+        for line in block.split("\n"):             # one very big paragraph: cut between lines
+            while tlen(line) > limit:
+                if cur:
+                    parts.append(cur)
+                    cur = ""
+                parts.append(line[:1700])           # 1,700 characters are at most 3,400 UTF-16 units
+                line = line[1700:]
+            piece = line if not cur else "\n" + line
+            if measure(cur + piece) > limit:
+                parts.append(cur)
+                cur = line
+            else:
+                cur += piece
+    if cur:
+        parts.append(cur)
+    parts = [p for p in parts if p.strip()]
+    while len(parts) >= 2 and measure(parts[-1]) < 900 and "\n\n" in parts[-2]:
+        head, tail = parts[-2].rsplit("\n\n", 1)      # no tiny last message: move whole paragraphs into it
+        if not head.strip() or measure(tail + "\n\n" + parts[-1]) > limit:
+            break
+        parts[-2], parts[-1] = head, tail + "\n\n" + parts[-1]
+    return parts
+
+
+def tg_send(text, html_mode=False):
+    """Send a message (cut into parts if long). html_mode: bold and italics with Telegram HTML; if Telegram cannot
+    read the HTML, the part is sent again as plain text."""
+    tok, chat = os.getenv("TG_TOKEN", ""), os.getenv("TG_CHAT", "")
+    text = safe_str(text)
+    if DRY_RUN or not (tok and chat):
+        print("\n----- TELEGRAM -----\n" + (strip_html(text) if html_mode else text) + "\n--------------------\n")
+        return not DRY_RUN and False
+    parts = split_message(text, measure=(lambda t: tlen(strip_html(t))) if html_mode else tlen)
     ok = True
-    for part in [p for p in parts if p.strip()]:
+    for k, part in enumerate(parts):
+        if k > 0:
+            part = ("<i>(continued)</i>\n" if html_mode else "(continued)\n") + part
+        body = {"chat_id": chat, "text": part, "disable_web_page_preview": "true"}
+        if html_mode:
+            body["parse_mode"] = "HTML"
         try:
-            r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
-                              data={"chat_id": chat, "text": part, "disable_web_page_preview": "true"}, timeout=30)
+            r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage", data=body, timeout=30)
+            if r.status_code == 400 and html_mode:          # HTML not accepted: send the same words as plain text
+                log("Telegram HTML refused, sending plain text:", r.text[:200])
+                body.pop("parse_mode", None)
+                body["text"] = strip_html(part)
+                r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage", data=body, timeout=30)
+            if r.status_code == 429:                        # too many messages: wait as Telegram asks, once
+                try:
+                    wait = float(r.json().get("parameters", {}).get("retry_after", 5))
+                except Exception:
+                    wait = 5.0
+                time.sleep(min(wait, 30))
+                r = requests.post(f"https://api.telegram.org/bot{tok}/sendMessage", data=body, timeout=30)
             ok = ok and r.status_code == 200
             if r.status_code != 200:
                 log("Telegram error", r.status_code, r.text[:200])
         except Exception as e:
             ok = False
             log("Telegram error", e)
+        if len(parts) > 1:
+            time.sleep(0.5)
     return ok
 
 
@@ -3533,6 +4205,34 @@ def write_sheet(st):
         return False, f"{type(e).__name__}: {clip(str(e), 150)}"
 
 
+def write_trades_csv(st):
+    """Every trade the team took (open and closed) in state_v7/trades.csv - opens in Excel, and GitHub shows it as
+    a table. Works without any Google key."""
+    import csv
+    head = ["Signal time (IST)", "Market", "Side", "Kind", "Entry plan", "Stop", "T1", "T2", "T3", "T4", "Filled at",
+            "Status", "Exit", "Exit time (IST)", "Result (x risk)", "Risk Rs", "Result Rs"]
+    rows = []
+    for t in sorted(st.books["system"]["closed"] + [v for v in st.books["system"]["open"].values() if v],
+                    key=lambda t: t["signal_ts"], reverse=True):
+        dec = MARKETS[t["mkt"]]["decimals"]
+        rows.append([ist_str(t["signal_ts"], "%Y-%m-%d %H:%M"), MARKETS[t["mkt"]]["name"], t["d"], t.get("kind", ""),
+                     round(t["entry_plan"], dec + 1), round(t["stop0"], dec + 1)] +
+                    [round(v, dec + 1) for v in t["t"]] +
+                    [round(t["fill"], dec + 1) if finite(t.get("fill")) else "", t.get("why") or t["status"],
+                     round(t["exit"], dec + 1) if finite(t.get("exit")) else "",
+                     ist_str(t["exit_ts"], "%Y-%m-%d %H:%M") if t.get("exit_ts") else "",
+                     round(t["r"], 2) if t.get("r") is not None else "", t.get("risk_rs", ""), t.get("pnl_rs", "")])
+    try:
+        with open(_p("trades.csv"), "w", newline="", encoding="utf-8-sig") as fh:
+            w = csv.writer(fh)
+            w.writerow(head)
+            w.writerows(rows)
+        return True
+    except Exception as e:
+        log("trades.csv failed:", e)
+        return False
+
+
 # =============================================================== the hourly run
 def get_hourly(mkt):
     h = fetch_yahoo(MARKETS[mkt]["ticker"], "729d", "1h")     # Yahoo keeps hourly bars for 730 days
@@ -3570,11 +4270,34 @@ def get_shared(st, now, markets_live):
     return shared
 
 
+def remember_decision(st, rep):
+    """The latest decision of each market (shown as 'other markets' in the reports)."""
+    st.misc.setdefault("last_decision", {})[rep["mkt"]] = {
+        "time": rep["time"], "decision": rep.get("decision", ""), "price": rep.get("price"),
+        "why": clip(rep.get("first_reason") or rep.get("skip") or "", 80)}
+
+
+def report_due(st, mkt, bar, now):
+    """Full report every 2 hours (candles that close at an even UTC hour = 18:30, 20:30 ... IST), or every hour
+    with TG_MODE=all. A report missed by a skipped run is sent at the next run."""
+    if CFG["TG_MODE"] == "all":
+        return True
+    if CFG["TG_MODE"] != "2h":
+        return False
+    end = pd.Timestamp(bar) + pd.Timedelta(hours=1)
+    last = (st.misc.get("last_report_sent") or {}).get(mkt)
+    if not last:
+        return True
+    gap = end - pd.Timestamp(last)
+    return (end.hour % 2 == 0 and gap >= pd.Timedelta(minutes=90)) or gap >= pd.Timedelta(minutes=150)
+
+
 def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
     rep = {"time": pd.Timestamp(now).isoformat(), "time_ist": ist_str(now, "%H:%M"), "mkt": mkt}
     if h_raw is None or len(h_raw) == 0:
         rep.update({"skip": "no price data", "decision": "NO DATA"})
         st.add_report(rep)
+        remember_decision(st, rep)
         return rep
     h_closed = closed_hourly(h_raw, now, MARKETS[mkt]["data_delay_min"])
     if mkt == "OIL" and h_closed is not None and len(h_closed):
@@ -3589,6 +4312,7 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
     if x is None:
         rep.update({"skip": why, "decision": "MARKET CLOSED" if "closed" in why else "NO DATA"})
         st.add_report(rep)
+        remember_decision(st, rep)
         return rep
     x["usdinr"] = shared.get("usdinr", CFG["USDINR_DEFAULT"])
     f = x["f"]
@@ -3607,6 +4331,11 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
         lvl_plan = plan_at(lv["vote"], x["c"], x["atr"], lv["struct"], lv["struct"], mkt)
         if lvl_plan.get("valid"):
             x[key] = dict(lvl_plan, structure="zone")
+            if not x["shock"]:              # the bull/bear room (in R) must use the plan that would really trade
+                facts = fact_sheet(x, rules)
+                x["facts"] = facts
+                rules["bull"] = agent_debater("bull", x, facts)
+                rules["bear"] = agent_debater("bear", x, facts)
     events_active, events_up = event_status(shared.get("events", []), mkt, now)
     weights = current_weights(st, mkt, now)
     d = {"UP": "BUY", "DOWN": "SELL"}.get(x["trend"])
@@ -3618,7 +4347,7 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
             key = f"event {e['label']} {e['time'].isoformat()}"
             if e["start"] - pd.Timestamp(now) <= pd.Timedelta(hours=2) and key not in t_open["events_sent"]:
                 t_open["events_sent"].append(key)
-                notify(f"{MARKETS[mkt]['name']} {t_open['d']} is still open and runs into {e['label']} at "
+                notify(f"⚠️ {MARKETS[mkt]['name']} {t_open['d']} is still open and runs into {e['label']} at "
                        f"{ist_str(e['time'], '%a %H:%M')}. Consider closing it or moving the stop to the entry price "
                        f"before {ist_str(e['start'], '%H:%M')}.")
     # ---- rules-only twin and trend-only twin (paper, no AI)
@@ -3712,7 +4441,7 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
                 finals[side] = fb
     else:
         for a in AGENTS:
-            finals[a] = dict(rules[a], model="code", ai="no AI this hour", flag="")
+            finals[a] = dict(rules[a], model="code", ai="no AI this hour" if pre else "no AI key", flag="")
     dec = decide(x, finals, weights, st, mkt, events_active)
     # rebuttal round only for a candidate trade
     if use_ai and dec["trade"] and debate.get("bull") and debate.get("bear"):
@@ -3788,17 +4517,18 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
                 dec["kind"] = kind
                 paper = (mkt not in CFG["REAL_MONEY"]) or "PAPER" in risk_note
                 tm = finals["time_machine"]
+                tmd = tm.get("data") or {}
                 tm_txt = {"tm.confirm": "CONFIRM", "tm.block": "BLOCK"}.get(tm["rule_id"], "silent") + \
-                    (f" ({tm['data'].get('avg_R', '-')}R, {tm['data'].get('cases', 0)} cases)" if tm["data"].get("cases")
-                     else "")
+                    (f" ({tmd['avg_R']:+.2f}R, {tmd['cases']} cases)" if finite(tmd.get("avg_R")) and tmd.get("cases")
+                     else f" (only {tmd['cases']} similar cases)" if tmd.get("cases") else "")
                 open_trade(st.books["system"], mkt, dec["d"], plan, x, rp, kind, now,
                            {"votes": {a: finals[a]["vote"] for a in VOTERS}, "daily": x["daily_view"][0]})
                 st.save()                                # the trade is saved before the card goes out
                 note = mood_note(x, dec["d"])
                 risk_note = "; ".join(s for s in (risk_note, note) if s)
                 card = trade_card(mkt, x, dec, finals, plan, rp, dec.get("room"), events_up, tm_txt, insp_txt, debate,
-                                  paper, risk_note)
-                sent = notify(card)
+                                  paper, risk_note, rules)
+                sent = notify(card, html_mode=True)
                 st.books["system"]["open"][mkt]["msg_failed"] = not sent and not DRY_RUN
     first = pre[0] if pre else (dec["blocks"][0][1] if dec.get("blocks") and not dec["why"].startswith("only")
                                 else dec.get("why", ""))
@@ -3810,6 +4540,16 @@ def run_market(mkt, h_raw, st, shared, brains, now, notify, report_rows):
                                "flag": finals[a].get("flag", ""), "reason": finals[a]["reason"]} for a in AGENTS},
                 "test_mode": {"chop_gate_pass": x["chop_pass"], "power_trend": x["power_trend"]}})
     st.add_report(rep)
+    remember_decision(st, rep)
+    try:                                     # the full report (sent every 2 hours; the latest is kept for "report")
+        text = build_report(st, mkt, x, rules, finals, dec, pre, weights, events_active, events_up, insp_txt,
+                            final_trade, use_ai, debate, now)
+        st.cache.setdefault("last_report_text", {})[mkt] = {"time": pd.Timestamp(now).isoformat(), "text": text}
+        if report_due(st, mkt, f.index[-1], now):
+            rep = dict(rep, report_text=text)
+    except Exception as e:                   # a report problem must never stop the trading part
+        traceback.print_exc()
+        log(f"{mkt}: report failed ({type(e).__name__}: {e})")
     report_rows.append(rep)
     last_bar[mkt] = bar                      # only now is this candle done (a crash above means it is judged again)
     return rep
@@ -3957,21 +4697,35 @@ def run(mode="run", markets=None):
         tg_document(weekly_pdf(st, now), f"AI Team {VERSION} - weekly report card")
         st.save()
         return
+    if mode == "report":                       # the latest full report of each market, again, now
+        saved = st.cache.get("last_report_text", {})
+        sent_any = False
+        for mkt in todo:
+            item = saved.get(mkt)
+            if item:
+                tg_send(f"<i>(Latest report, from the check at {esc(ist_str(item['time'], '%d %b %H:%M'))})</i>\n"
+                        + item["text"], html_mode=True)
+                sent_any = True
+        if not sent_any:
+            tg_send(f"AI Team {VERSION}: no report saved yet - the first one comes with the next hourly run.")
+        return
     msgs = []
     outbox = st.misc.setdefault("outbox", [])
     if outbox and os.getenv("TG_TOKEN") and os.getenv("TG_CHAT") and not DRY_RUN:     # resend what failed before
         waiting, outbox[:] = list(outbox), []
         for item in waiting:
-            if not tg_send(f"(Delayed message from {ist_str(item['time'], '%d %b %H:%M')}, Telegram was down)\n"
-                           + item["text"]):
+            hm = bool(item.get("html"))
+            head = f"(Delayed message from {ist_str(item['time'], '%d %b %H:%M')}, Telegram was down)\n"
+            if not tg_send((esc(head) if hm else head) + item["text"], html_mode=hm):
                 outbox.append(item)
 
-    def notify(text):
-        if CFG["TG_MODE"] not in ("trades", "all"):
+    def notify(text, html_mode=False):
+        """Trade cards and trade updates (kept and sent again later if Telegram fails)."""
+        if CFG["TG_MODE"] not in ("trades", "all", "2h"):
             return True
-        ok = tg_send(text)
+        ok = tg_send(text, html_mode=html_mode)
         if not ok and os.getenv("TG_TOKEN") and os.getenv("TG_CHAT") and not DRY_RUN:
-            outbox.append({"time": pd.Timestamp(now).isoformat(), "text": text})
+            outbox.append({"time": pd.Timestamp(now).isoformat(), "text": text, "html": html_mode})
             del outbox[:-20]                         # keep at most 20 waiting messages
         return ok
     brains = Brains(st, now)
@@ -3993,17 +4747,18 @@ def run(mode="run", markets=None):
         st.save()                                    # nothing is lost if a later step is cut short
     msgs += update_inspector_status(st)
     msgs += weekly_model_swaps(st, now) if to_ist(now).weekday() == 0 else []
-    if CFG["TG_MODE"] == "all" and rows:
-        summ = [f"AI Team {VERSION} - hourly ({ist_str(now, '%H:%M')})"]
-        for r in rows:
-            summ.append(f"{MARKETS[r['mkt']]['name']}: {r.get('decision')} | trend {r.get('trend')} | {r.get('side', 0)} for "
-                        f"/ {r.get('opp', 0)} against | {clip(r.get('why', ''), 90)}")
-        notify("\n".join(summ))
+    for r in rows:                                   # the full reports (every 2 hours), one message per market
+        if r.get("report_text"):
+            sent = tg_send(r["report_text"], html_mode=True)
+            if sent or DRY_RUN:
+                end = pd.Timestamp(st.misc["last_bar"][r["mkt"]]) + pd.Timedelta(hours=1)
+                st.misc.setdefault("last_report_sent", {})[r["mkt"]] = end.isoformat()
     if msgs:
         notify(f"AI Team {VERSION} notes:\n" + "\n".join(msgs))
     send_pdfs(st, now)
     st.prune(now)
     st.save()
+    write_trades_csv(st)
     ok, msg = write_sheet(st)
     if not ok and os.getenv("GOOGLE_SA_JSON"):
         log("Google Sheet:", msg)
@@ -4023,44 +4778,148 @@ def setup_test(st, now):
         if hc is not None and len(hc) > 200:
             a = (atr(hc, 14) / hc["Close"] * 100).iloc[-24 * 90:].median()
             cost_r = MARKETS[mkt]["cost_pct"] / (1.5 * a) if a > 0 else float("nan")
-            lines.append(f"   typical hourly move (median ATR, 90 days): {a:.2f}% of price; a 1.5x ATR stop costs "
-                         f"about {cost_r:.2f}R in fees ({'ok' if cost_r <= 0.2 else 'TOO HIGH - most trades skipped'})")
+            lines.append(f"   typical hourly move (median ATR, 90 days): {a:.2f}% of price; fees of "
+                         f"{MARKETS[mkt]['cost_pct']:.2f}% cost about {cost_r:.2f}R with a 1.5x ATR stop ("
+                         + ("ok" if cost_r <= CFG["MAX_COST_R"] else
+                            f"above the {CFG['MAX_COST_R']}R limit - trades with tight stops are skipped") + ")")
     shared = get_shared(st, now, list(MARKETS))
     dv = shared.get("deriv") or {}
-    lines.append(f"BTC derivatives: {dv.get('venues_any', 0)} of 3 venues answered")
+    lines.append(f"BTC derivatives (funding, open interest): {dv.get('venues_any', 0)} of 5 exchanges answered "
+                 "(2 are enough)")
     lines.append("Fear & Greed: " + ("ok" if shared.get("fng") else "NOT working"))
     lines.append("Macro (dollar, yields, Nasdaq, S&P, VIX, copper): " + ("ok" if shared["macro"].get("fresh") else
                                                                          "stale or NOT working (normal at weekends)"))
     lines.append(f"Event calendar: {len(shared.get('events', []))} events (backups included)")
     fl = shared.get("flows") or {}
-    lines.append("Gold/Oil flows: " + (", ".join(k for k in ("gld", "cot_GOLD", "cot_OIL", "wti_spread") if k in fl)
-                                       or "none"))
+    flow_names = {"gld": "GLD gold holdings", "cot_GOLD": "big funds in gold (COT)", "cot_OIL": "big funds in oil (COT)",
+                  "wti_spread": "oil month spread"}
+    lines.append("Gold/Oil flows: " + (", ".join(v for k, v in flow_names.items() if k in fl) or "none"))
     items = fetch_news_items("BTC", now)
     lines.append(f"News feeds: {len(items)} fresh BTC stories right now")
+    # ---- AI brains: one direct check per provider, with the reason and the fix when it fails
     b = Brains(st, now)
     if b.any():
-        b.discover()
-    for p in ("gemini", "groq", "openrouter"):
+        try:
+            b.discover(force=True)
+        except Exception as e:                     # an odd answer must not stop the test message
+            log("model discovery failed", type(e).__name__, e)
+    lines += ["", "AI BRAINS"]
+    probe = {"groq": "trend", "openrouter": "macro", "gemini": "momentum"}
+    works = {}
+    others = ("groq", "openrouter", "gemini")
+    for p in others:
+        need = {"groq": "main brain for most agents", "openrouter": "backup brain",
+                "gemini": "backup brain"}[p]
         if not b.key[p]:
-            lines.append(f"AI {BRAIN_NAME[p]}: no key added" + (" (needed)" if p == "gemini" else " (optional)"))
+            lines.append(f"{BRAIN_NAME[p]}: no key added ({need}) - add the GitHub secret {p.upper()}_API_KEY")
+            works[p] = False
             continue
-        have = b.available.get(p)
-        lines.append(f"AI {BRAIN_NAME[p]}: {len(have) if have else 'unknown number of'} models listed")
-    for role in ("trend", "levels", "macro", "news", "inspector"):
+        for k in [k for k in st.models["skip_until"] if k.startswith(p + "|")]:
+            st.models["skip_until"].pop(k, None)             # a test always tries for real
+        text, prov, mdl = b.ask(probe[p], 'Reply with only this JSON: {"ok": true}', max_tokens=20,
+                                exclude=tuple(o for o in others if o != p))
+        works[p] = bool(text)
+        if text:
+            n = len(b.available.get(p) or [])
+            lines.append(f"{BRAIN_NAME[p]}: working ({mdl}{f', {n} models listed' if n else ''})")
+        else:
+            err = b.last_err.get(p) or b.list_status.get(p) or ("?", "", "")
+            if len(err) == 2:
+                err = (err[0], "", err[1])
+            lines.append(f"{BRAIN_NAME[p]}: NOT working - " + ai_error_help(p, err[0], err[2]))
+    covered = [a for a in list(ROLE_MODELS) if any(works.get(p) for p, _ in ROLE_MODELS[a])]
+    missing = [a for a in ROLE_MODELS if a not in covered]
+    lines.append(f"Agents with a working brain: {len(covered)} of {len(ROLE_MODELS)}" +
+                 (f" (none for: {', '.join(PRETTY.get(a, a.title()) for a in missing)})" if missing else ""))
+    for role in ("news", "inspector"):
         text, prov, mdl = b.ask(role, 'Reply with only this JSON: {"ok": true}', max_tokens=20)
-        lines.append(f"Brain for {role}: " + (f"working ({BRAIN_NAME[prov]} {mdl})" if text else "NOT answering"))
-    lines.append("Sources: " + ", ".join(f"{k}={v}" for k, v in sorted(SOURCES.items())))
+        lines.append(f"Brain for {role}: " + (f"working ({BRAIN_NAME[prov]} {mdl})" if text else
+                                              "NOT answering (its agent uses the code rule until a brain works)"))
+    lines += ["", "DATA SOURCES"]
+    bad = {k: v for k, v in SOURCES.items() if v != "ok"}
+    lines.append(f"{len(SOURCES) - len(bad)} of {len(SOURCES)} working")
+    for k, v in sorted(bad.items()):
+        lines.append(f"Not working: {source_help(k)} ({v})")
     ok, msg = write_sheet(st)
-    lines.append("Google Sheet: " + ("working" if ok else msg))
+    lines += ["", "Google Sheet: " + ("working" if ok else msg + (
+        " - trades are still saved in the file state_v7/trades.csv in GitHub (opens in Excel)"
+        if "no Google key" in msg else ""))]
+    lines.append(f"Telegram reports: {telegram_mode_text()}")
     text = "\n".join(lines)
     print(text)
     tg_send(text)
     st.save()
 
 
+def ai_error_help(p, status, text):
+    """Plain words for an AI error, with the fix."""
+    low = str(text).lower()
+    secret = f"{p.upper()}_API_KEY"
+    site = {"groq": "console.groq.com/keys", "openrouter": "openrouter.ai/keys", "gemini": "aistudio.google.com/apikey"}[p]
+    if status in (401, 403) and p != "gemini" or "invalid api key" in low or "api key not valid" in low or \
+            "unauthorized" in low or "user not found" in low:
+        return (f"the key was NOT accepted (error {status}). Make a new key at {site}, then in GitHub open "
+                f"Settings > Secrets and variables > Actions, click {secret} > Update, paste the key (nothing else, "
+                "no spaces) and save. Then run the test again.")
+    if p == "openrouter" and ("data policy" in low or "no endpoints found" in low or "privacy" in low):
+        return ("OpenRouter blocks free models until you allow them: open openrouter.ai/settings/privacy, switch ON "
+                "the option for free models, save, and run the test again.")
+    if p == "gemini" and status == 403:
+        return "Google refused this key (403) - make a new key at aistudio.google.com/apikey and update GEMINI_API_KEY."
+    if status == 429:
+        if any(s in re.sub(r"[\s_-]", "", low) for s in ("perday", "daily", "rpd", "tpd", "quota")):
+            return "the free daily limit is used up. It comes back by itself (Gemini at about 13:30 India time)."
+        return "busy right now (too many requests). It tries again by itself."
+    if status == 402:
+        return "OpenRouter asks for credit for this model (402). Free models need no credit - this usually fixes itself."
+    if status == 404:
+        return "this model name is not available (404) - the program moves to another model by itself."
+    if status in (0, "network"):
+        return "could not connect (network or time-out)."
+    if status in ("empty", 200):
+        return "it answered with an empty message (busy, or a problem with this model) - the program tries other " \
+               "models by itself."
+    if status in ("unreadable", "not JSON"):
+        return f"it sent an answer the program cannot read (perhaps a web page from a firewall): {clip(text, 80)}"
+    if status == "length":
+        return "the model used all its words on thinking - the program moves to the next model."
+    if status in (500, 502, 503, 504):
+        return f"the service had a problem (error {status}) - it tries again by itself."
+    return f"error {status}: {clip(text, 100)}"
+
+
+SOURCE_HELP = {
+    "gld": "GLD gold holdings (optional - gold's flow agent also uses COT)",
+    "news:gdelt": "GDELT news search (optional - one of several news feeds)",
+    "cot_gold": "COT big-fund positions for gold (optional)", "cot_oil": "COT big-fund positions for oil (optional)",
+    "wti_spread": "oil month spread (optional)", "calendar": "event calendar (backup dates are used)",
+    "fear_greed": "Fear & Greed index (Bitcoin mood agent)", "hyperliquid": "Hyperliquid (1 of 5 BTC exchanges)",
+    "okx_funding": "OKX funding (1 of 5 BTC exchanges)", "okx_oi": "OKX open interest (1 of 5 BTC exchanges)",
+    "deribit": "Deribit (1 of 5 BTC exchanges)", "dydx": "dYdX (1 of 5 BTC exchanges)",
+    "kraken_futures": "Kraken Futures (1 of 5 BTC exchanges)",
+}
+
+
+def source_help(name):
+    if name in SOURCE_HELP:
+        return SOURCE_HELP[name]
+    if name.startswith("news:"):
+        return f"news feed {name[5:]} (optional - one of several news feeds)"
+    if name.startswith("yahoo_"):
+        return f"Yahoo prices: {name[6:]}"
+    return name
+
+
+def telegram_mode_text():
+    return {"2h": "a full report of each market every 2 hours, plus a special card when a trade forms",
+            "all": "a full report of each market every hour, plus a special card when a trade forms",
+            "trades": "only trade cards and trade updates (no regular reports)"}.get(
+        CFG["TG_MODE"], f"unknown setting TG_MODE={CFG['TG_MODE']} - nothing is sent")
+
+
 def main():
     mode = (sys.argv[1] if len(sys.argv) > 1 else "run").lower()
-    if mode not in ("run", "test", "daily-pdf", "weekly-pdf"):
+    if mode not in ("run", "test", "report", "daily-pdf", "weekly-pdf"):
         print(__doc__)
         sys.exit(2)
     arg = (sys.argv[2] if len(sys.argv) > 2 else os.getenv("MARKETS", "")).upper().replace(" ", "")
