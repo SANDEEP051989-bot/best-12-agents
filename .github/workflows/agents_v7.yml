@@ -1,0 +1,88 @@
+# AI Trading Team v7 - Bitcoin, Gold and US Oil, every hour, free on GitHub.
+# Put this file in your repo at:  .github/workflows/agents_v7.yml
+# Put agents_v7.py in the main folder of the same repo (next to your old agents_v2.py).
+# It saves its own trades and report card in the folder state_v7/ - it never touches the old bot's files.
+
+name: AI Team v7 (BTC Gold Oil)
+
+on:
+  schedule:
+    - cron: "7 * * * *"          # Bitcoin: every hour at minute 7 (crypto prices on Yahoo are live)
+    - cron: "37 * * * *"         # Gold and US Oil: minute 37 (Yahoo shows COMEX/NYMEX prices 30 minutes late)
+  workflow_dispatch:             # the "Run workflow" button
+    inputs:
+      mode:
+        description: "test = check keys and data, run = one normal hour, daily-pdf / weekly-pdf = send a PDF now"
+        required: true
+        default: "test"
+        type: choice
+        options: [test, run, daily-pdf, weekly-pdf]
+      markets:
+        description: "Which markets (for run): ALL, BTC, or GOLD,OIL"
+        required: false
+        default: "ALL"
+
+permissions:
+  contents: write                # lets the team save its trades and report card in the repo
+
+concurrency:
+  group: ai-team-v7
+  cancel-in-progress: false
+
+jobs:
+  team:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}   # always start from the newest saved state
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install --quiet "yfinance>=1.8" "pandas==3.0.*" "numpy==2.*" "requests>=2.32" "fpdf2==2.*" "gspread==6.*"
+
+      - name: Run the team
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN || secrets.TELEGRAM_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT || secrets.TELEGRAM_CHAT_ID || secrets.CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_KEY || secrets.GEMINI || secrets.GOOGLE_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON || secrets.GOOGLE_CREDENTIALS || secrets.GCP_SA_KEY || secrets.GOOGLE_SERVICE_ACCOUNT || secrets.GCP_CREDENTIALS || secrets.SERVICE_ACCOUNT_JSON || secrets.GSHEET_CREDENTIALS }}
+          SHEET_NAME: ${{ vars.SHEET_NAME || secrets.SHEET_NAME }}
+          SHEET_ID: ${{ vars.SHEET_ID || secrets.SHEET_ID }}
+          CAPITAL: ${{ vars.CAPITAL || secrets.CAPITAL }}          # empty = Rs 20,000
+          RISK_PCT: ${{ vars.RISK_PCT || secrets.RISK_PCT }}
+          TG_MODE: ${{ vars.TG_MODE || secrets.TG_MODE }}          # empty = Telegram only when a trade forms; "all" = also hourly summaries
+          REAL_MONEY: ${{ vars.REAL_MONEY || secrets.REAL_MONEY }} # empty = every card says PAPER
+          MIN_SIDE: ${{ vars.MIN_SIDE }}                           # empty = 6 agents must agree (research)
+          SWING_K: ${{ vars.SWING_K }}                             # empty = 3-candle swing points for stops; 10 = strict version
+          RUN_MODE: ${{ github.event.inputs.mode }}
+          RUN_MARKETS: ${{ github.event.inputs.markets }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          MODE="${RUN_MODE:-run}"
+          if [ "$SCHEDULE" = "7 * * * *" ]; then MKTS="BTC";
+          elif [ "$SCHEDULE" = "37 * * * *" ]; then MKTS="GOLD,OIL";
+          else MKTS="${RUN_MARKETS:-ALL}"; fi
+          echo "Mode: $MODE  Markets: $MKTS"
+          python agents_v7.py "$MODE" "$MKTS"
+
+      - name: Save trades and report card
+        if: always()
+        run: |
+          git config user.name "ai-team-v7"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state_v7 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nothing new to save"; exit 0; fi
+          git commit -q -m "AI Team v7 state $(date -u +%Y-%m-%d_%H%M)"
+          for i in 1 2 3; do
+            if git pull --rebase -q && git push -q; then echo "saved"; exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          echo "Could not save the trades and report card"; exit 1
