@@ -848,6 +848,22 @@
    "fill_after": "2026-11-09T22:08:38",
    "rule_id": "mac.oil_buy",
    "chop": true
+  },
+  {
+   "key": "GOLD|time_machine|block",
+   "mkt": "GOLD",
+   "agent": "time_machine",
+   "kind": "tm_block",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-09T21:00:00",
+   "stop": 4120.954603222806,
+   "target": 4206.891086523137,
+   "dist": 28.64549443344361,
+   "cost_r": 0.07243024042223535,
+   "trend": "UP",
+   "fill_after": "2026-11-09T23:06:10",
+   "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
  "graded": [
@@ -1822,6 +1838,42 @@
   },
   {
    "mkt": "BTC",
+   "ts": "2026-11-09T21:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "BUY",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-09T21:00:00",
+   "ai": false,
+   "v": {
+    "trend": "BUY",
+    "momentum": "BUY",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "OIL",
    "ts": "2026-11-09T21:00:00",
    "ai": false,
    "v": {
