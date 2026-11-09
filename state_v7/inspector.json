@@ -1,0 +1,9 @@
+{
+ "status": {
+  "BTC": "live",
+  "GOLD": "test",
+  "OIL": "test"
+ },
+ "pending": [],
+ "graded": []
+}

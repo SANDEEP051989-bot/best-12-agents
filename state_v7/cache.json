@@ -1,0 +1,59 @@
+{
+ "fng": {
+  "ts": "2026-11-09T12:30:16",
+  "value": 29.0,
+  "avg30": 47.46666666666667
+ },
+ "flows": {
+  "day": "2026-11-09",
+  "tried": "2026-11-09T12:30:16",
+  "cot_GOLD": {
+   "net": 103614.0,
+   "rank": 0.2129032258064516
+  },
+  "cot_OIL": {
+   "net": 21728.0,
+   "rank": 0.0967741935483871
+  },
+  "wti_spread": {
+   "spread": 1.23,
+   "chg5": -0.43,
+   "contracts": "CLZ26.NYM - CLF27.NYM"
+  }
+ },
+ "events": {
+  "events": [
+   {
+    "title": "FOMC Member Waller Speaks",
+    "time": "2026-11-10T09:00:00",
+    "impact": "Medium"
+   },
+   {
+    "title": "Core CPI m/m",
+    "time": "2026-11-10T13:30:00",
+    "impact": "High"
+   },
+   {
+    "title": "CPI m/m",
+    "time": "2026-11-10T13:30:00",
+    "impact": "High"
+   },
+   {
+    "title": "Unemployment Claims",
+    "time": "2026-11-12T13:30:00",
+    "impact": "Medium"
+   },
+   {
+    "title": "Core PPI m/m",
+    "time": "2026-11-13T13:30:00",
+    "impact": "High"
+   },
+   {
+    "title": "PPI m/m",
+    "time": "2026-11-13T13:30:00",
+    "impact": "High"
+   }
+  ],
+  "fetched": "2026-11-09T12:30:16"
+ }
+}
