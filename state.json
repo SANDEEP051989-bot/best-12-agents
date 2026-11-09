@@ -18,7 +18,7 @@
   "GOLD:news": 0.95,
   "GOLD:mood": 1.4,
   "GOLD:special": 0.6,
-  "BTC:time_machine": 1.3,
+  "BTC:time_machine": 1.17,
   "OIL:time_machine": 1.45,
   "OIL:momentum": 0.65,
   "OIL:daily_view": 1.45,
@@ -1538,6 +1538,11 @@
     "said": "SELL",
     "right": true,
     "price": 74818.72
+   },
+   {
+    "said": "SELL",
+    "right": false,
+    "price": 74563.46
    }
   ],
   "GOLD:momentum": [
@@ -6420,7 +6425,8 @@
    "votes": {
     "time_machine": "SELL"
    },
-   "inspector_removed": {}
+   "inspector_removed": {},
+   "checked": true
   },
   {
    "time": 1794201366.3468947,
@@ -6888,6 +6894,73 @@
    "inspector_removed": {
     "mood": "SELL"
    }
+  },
+  {
+   "time": 1794240143.6809871,
+   "market": "BTC",
+   "price": 75429.69,
+   "atr": 600.5943,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "BUY",
+    "levels": "WAIT",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {
+    "mood": "SELL"
+   }
+  },
+  {
+   "time": 1794240147.9292667,
+   "market": "GOLD",
+   "price": 4127.6,
+   "atr": 17.0786,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "WAIT",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {
+    "mood": "SELL"
+   }
+  },
+  {
+   "time": 1794240164.8238158,
+   "market": "OIL",
+   "price": 88.25,
+   "atr": 1.255,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "SELL"
+   },
+   "inspector_removed": {}
   }
  ],
  "trades": [
@@ -6969,7 +7042,7 @@
   }
  ],
  "last_oi": {
-  "okx": 35464.0
+  "okx": 35260.0
  },
  "last_weekly": "2026-11-09"
 }
