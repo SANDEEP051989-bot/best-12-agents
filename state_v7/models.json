@@ -20,24 +20,24 @@
   "2026-11-09|openrouter|429": 9
  },
  "discovered": {
-  "day": "2026-11-09",
+  "day": "2026-11-10",
   "models": {
    "groq": [
-    "qwen/qwen3.8-27b",
-    "openai/gpt-oss-20b",
-    "openai/gpt-oss-safeguard-20b",
     "meta-llama/llama-prompt-guard-2-22m",
+    "allam-2-7b",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-safeguard-20b",
+    "whisper-large-v3-turbo",
     "canopylabs/orpheus-v1-english",
     "canopylabs/orpheus-arabic-saudi",
-    "meta-llama/llama-prompt-guard-2-86m",
-    "openai/gpt-oss-120b",
     "whisper-large-v3",
-    "whisper-large-v3-turbo",
-    "allam-2-7b"
+    "openai/gpt-oss-120b",
+    "meta-llama/llama-prompt-guard-2-86m",
+    "openai/gpt-oss-20b"
    ],
    "openrouter": [
+    "thinkingmachines/inkling-2-small:free",
     "liquid/lfm-3-1.7b:free",
-    "stealth/crouton-alpha",
     "recursive/flint-v1.0:free",
     "xingchen-agi/xing4.0-29b-a4b:free",
     "nvidia/nemotron-3.5-super-vl:free",

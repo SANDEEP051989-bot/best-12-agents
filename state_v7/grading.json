@@ -1907,6 +1907,24 @@
     "bear": "WAIT",
     "time_machine": "WAIT"
    }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-09T22:00:00",
+   "ai": false,
+   "v": {
+    "trend": "BUY",
+    "momentum": "BUY",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
   }
  ]
 }
