@@ -1,0 +1,36 @@
+# Full rules test: v7.0 vs v7.1 with every code filter (votes, room rule, Time Machine, risk officer),
+# replayed hour by hour on the last 2 years. Bitcoin, Gold and US Oil run at the same time (3 jobs).
+# Each market sends its own result to Telegram in about 15-25 minutes. Changes nothing in the repo.
+# Put this file in .github/workflows/  and compare_full.py next to agents_v7.py.
+
+name: Full rules test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        market: [BTC, GOLD, OIL]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install --quiet "yfinance>=1.8" "pandas==3.0.*" "numpy==2.*" "requests>=2.32" "fpdf2==2.*" "gspread==6.*"
+
+      - name: Replay ${{ matrix.market }}
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN || secrets.TELEGRAM_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT || secrets.TELEGRAM_CHAT_ID || secrets.CHAT_ID }}
+        run: python compare_full.py ${{ matrix.market }}
