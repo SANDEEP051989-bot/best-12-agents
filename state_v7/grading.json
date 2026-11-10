@@ -1,42 +1,6 @@
 {
  "pending": [
   {
-   "key": "OIL|trend|final",
-   "mkt": "OIL",
-   "agent": "trend",
-   "kind": "final",
-   "d": "SELL",
-   "model": "code",
-   "signal_ts": "2026-11-09T13:00:00",
-   "stop": 88.64581401838403,
-   "target": 83.31838020297803,
-   "dist": 1.7758112718019974,
-   "cost_r": 0.04891848820084977,
-   "trend": "DOWN",
-   "fill_after": "2026-11-09T15:18:19",
-   "flag": "",
-   "rule_id": "trend.down",
-   "stop_kind": "standard 1.5x ATR (no structure)"
-  },
-  {
-   "key": "OIL|trend|rule",
-   "mkt": "OIL",
-   "agent": "trend",
-   "kind": "rule",
-   "d": "SELL",
-   "model": "code",
-   "signal_ts": "2026-11-09T13:00:00",
-   "stop": 88.64581401838403,
-   "target": 83.31838020297803,
-   "dist": 1.7758112718019974,
-   "cost_r": 0.04891848820084977,
-   "trend": "DOWN",
-   "fill_after": "2026-11-09T15:18:19",
-   "rule_id": "trend.down",
-   "chop": true,
-   "stop_kind": "standard 1.5x ATR (no structure)"
-  },
-  {
    "key": "OIL|time_machine|block",
    "mkt": "OIL",
    "agent": "time_machine",
@@ -621,6 +585,42 @@
    "cost_r": 0.09724804126605653,
    "trend": "DOWN",
    "fill_after": "2026-11-10T17:40:13",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "OIL|trend|final",
+   "mkt": "OIL",
+   "agent": "trend",
+   "kind": "final",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-10T16:00:00",
+   "stop": 88.26221036338775,
+   "target": 83.60557652664247,
+   "dist": 1.5522112789150941,
+   "cost_r": 0.05586224005863295,
+   "trend": "DOWN",
+   "fill_after": "2026-11-10T18:06:20",
+   "flag": "",
+   "rule_id": "trend.down",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "OIL|trend|rule",
+   "mkt": "OIL",
+   "agent": "trend",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-10T16:00:00",
+   "stop": 88.26221036338775,
+   "target": 83.60557652664247,
+   "dist": 1.5522112789150941,
+   "cost_r": 0.05586224005863295,
+   "trend": "DOWN",
+   "fill_after": "2026-11-10T18:06:20",
+   "rule_id": "trend.down",
+   "chop": true,
    "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
@@ -2865,6 +2865,48 @@
    "r": 0.258,
    "hit": true,
    "why": "target"
+  },
+  {
+   "key": "OIL|trend|final",
+   "mkt": "OIL",
+   "agent": "trend",
+   "kind": "final",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-09T13:00:00",
+   "stop": 88.64581401838403,
+   "target": 83.31838020297803,
+   "dist": 1.7758112718019974,
+   "cost_r": 0.04891848820084977,
+   "trend": "DOWN",
+   "fill_after": "2026-11-09T15:18:19",
+   "flag": "",
+   "rule_id": "trend.down",
+   "stop_kind": "standard 1.5x ATR (no structure)",
+   "r": 0.835,
+   "hit": false,
+   "why": "time"
+  },
+  {
+   "key": "OIL|trend|rule",
+   "mkt": "OIL",
+   "agent": "trend",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-09T13:00:00",
+   "stop": 88.64581401838403,
+   "target": 83.31838020297803,
+   "dist": 1.7758112718019974,
+   "cost_r": 0.04891848820084977,
+   "trend": "DOWN",
+   "fill_after": "2026-11-09T15:18:19",
+   "rule_id": "trend.down",
+   "chop": true,
+   "stop_kind": "standard 1.5x ATR (no structure)",
+   "r": 0.835,
+   "hit": false,
+   "why": "time"
   }
  ],
  "vote_log": [
@@ -4035,6 +4077,42 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "SELL",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-10T16:00:00",
+   "ai": false,
+   "v": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "OIL",
+   "ts": "2026-11-10T16:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
     "time_machine": "WAIT"
    }
   }
