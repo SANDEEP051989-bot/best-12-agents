@@ -690,6 +690,21 @@
    "rule_id": "mom.pullback_down",
    "chop": true,
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "OIL|macro|wait",
+   "mkt": "OIL",
+   "agent": "macro",
+   "kind": "wait",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-10T19:00:00",
+   "stop": 87.76508454145466,
+   "target": 83.42983000156335,
+   "dist": 1.4450848466304338,
+   "cost_r": 0.059733516613990005,
+   "trend": "DOWN",
+   "fill_after": "2026-11-10T21:08:05"
   }
  ],
  "graded": [
@@ -4294,6 +4309,42 @@
   },
   {
    "mkt": "BTC",
+   "ts": "2026-11-10T19:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-10T19:00:00",
+   "ai": false,
+   "v": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "OIL",
    "ts": "2026-11-10T19:00:00",
    "ai": false,
    "v": {
