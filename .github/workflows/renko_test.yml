@@ -1,0 +1,17 @@
+name: Renko test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install yfinance pandas numpy requests
+      - run: python renko_test.py
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN || secrets.TELEGRAM_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT || secrets.TELEGRAM_CHAT_ID }}
