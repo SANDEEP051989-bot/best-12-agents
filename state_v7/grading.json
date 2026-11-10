@@ -37,21 +37,6 @@
    "stop_kind": "standard 1.5x ATR (no structure)"
   },
   {
-   "key": "GOLD|coin|coin",
-   "mkt": "GOLD",
-   "agent": "coin",
-   "kind": "coin",
-   "d": "SELL",
-   "model": "code",
-   "signal_ts": "2026-11-09T15:00:00",
-   "stop": 4159.056131633852,
-   "target": 4071.8877367322966,
-   "dist": 29.056131633851635,
-   "cost_r": 0.07106933662133423,
-   "trend": "UP",
-   "fill_after": "2026-11-09T16:28:01"
-  },
-  {
    "key": "BTC|momentum|final",
    "mkt": "BTC",
    "agent": "momentum",
@@ -2121,6 +2106,24 @@
    "r": -0.984,
    "hit": false,
    "why": "stop"
+  },
+  {
+   "key": "GOLD|coin|coin",
+   "mkt": "GOLD",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-09T15:00:00",
+   "stop": 4159.056131633852,
+   "target": 4071.8877367322966,
+   "dist": 29.056131633851635,
+   "cost_r": 0.07106933662133423,
+   "trend": "UP",
+   "fill_after": "2026-11-09T16:28:01",
+   "r": 1.55,
+   "hit": true,
+   "why": "target"
   }
  ],
  "vote_log": [
@@ -3122,6 +3125,42 @@
     "trend": "WAIT",
     "momentum": "SELL",
     "volatility": "SELL",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-10T13:00:00",
+   "ai": false,
+   "v": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "OIL",
+   "ts": "2026-11-10T13:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
     "levels": "WAIT",
     "special": "WAIT",
     "macro": "WAIT",
