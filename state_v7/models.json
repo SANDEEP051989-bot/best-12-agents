@@ -1,11 +1,11 @@
 {
  "skip_until": {
   "gemini|gemini-3.5-flash-lite": "2026-11-10T08:05:00",
-  "openrouter|google/gemma-4-31b-it:free": "2026-11-10T08:08:38"
+  "openrouter|google/gemma-4-31b-it:free": "2026-11-10T10:57:41"
  },
  "fail_streak": {
   "groq|openai/gpt-oss-20b": 0,
-  "gemini|gemini-3.5-flash-lite": 1,
+  "gemini|gemini-3.5-flash-lite": 0,
   "groq|qwen/qwen3.8-27b": 0,
   "openrouter|google/gemma-4-31b-it:free": 0,
   "groq|llama-3.3-70b-versatile": 1,
@@ -17,11 +17,11 @@
  "swap": {},
  "contra": {
   "2026-W46|trend|Groq openai/gpt-oss-20b": [
-   3,
-   1
+   5,
+   2
   ],
   "2026-W46|daily_view|Groq openai/gpt-oss-20b": [
-   2,
+   3,
    0
   ],
   "2026-W46|momentum|Groq meta-llama/llama-prompt-guard-2-22m": [
@@ -29,23 +29,35 @@
    0
   ],
   "2026-W46|volatility|Groq meta-llama/llama-prompt-guard-2-22m": [
-   4,
+   6,
    0
   ],
   "2026-W46|levels|Groq qwen/qwen3.8-27b": [
-   2,
+   3,
    0
   ],
   "2026-W46|special|Groq openai/gpt-oss-20b": [
-   2,
+   3,
    0
   ],
   "2026-W46|mood|Groq openai/gpt-oss-20b": [
-   2,
+   3,
    0
   ],
   "2026-W46|macro|Groq meta-llama/llama-prompt-guard-2-22m": [
-   2,
+   4,
+   0
+  ],
+  "2026-W46|momentum|Gemini gemini-3.5-flash-lite": [
+   1,
+   0
+  ],
+  "2026-W46|volatility|Gemini gemini-3.5-flash-lite": [
+   1,
+   0
+  ],
+  "2026-W46|macro|Gemini gemini-3.5-flash-lite": [
+   1,
    0
   ]
  },
@@ -56,8 +68,9 @@
   "2026-11-09|gemini|503": 2,
   "2026-11-09|openrouter|429": 9,
   "2026-11-10|gemini|429": 1,
-  "2026-11-10|groq|400": 12,
-  "2026-11-10|openrouter|429": 15
+  "2026-11-10|groq|400": 17,
+  "2026-11-10|openrouter|429": 24,
+  "2026-11-10|gemini|503": 2
  },
  "discovered": {
   "day": "2026-11-10",
