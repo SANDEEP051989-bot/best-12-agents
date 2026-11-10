@@ -20,11 +20,11 @@
   "GOLD:special": 0.6,
   "BTC:time_machine": 1.17,
   "OIL:time_machine": 1.45,
-  "OIL:momentum": 0.7,
+  "OIL:momentum": 0.75,
   "OIL:daily_view": 1.45,
   "OIL:mood": 1.45,
   "OIL:macro": 1.45,
-  "OIL:special": 1.4,
+  "OIL:special": 1.35,
   "OIL:trend": 1.15,
   "OIL:news": 1.44
  },
@@ -2116,16 +2116,6 @@
    {
     "said": "SELL",
     "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
     "price": 90.19
    },
    {
@@ -2177,6 +2167,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:momentum": [
@@ -2241,16 +2241,6 @@
     "price": 90.83
    },
    {
-    "said": "BUY",
-    "right": false,
-    "price": 90.83
-   },
-   {
-    "said": "BUY",
-    "right": false,
-    "price": 90.83
-   },
-   {
     "said": "SELL",
     "right": true,
     "price": 89.74
@@ -2279,6 +2269,16 @@
     "said": "BUY",
     "right": false,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "BUY",
+    "right": false,
+    "price": 87.5
    }
   ],
   "OIL:volatility": [
@@ -2357,16 +2357,6 @@
    {
     "said": "SELL",
     "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
     "price": 89.74
    },
    {
@@ -2398,6 +2388,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:news": [
@@ -2480,6 +2480,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:mood": [
@@ -2541,16 +2551,6 @@
    {
     "said": "SELL",
     "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
     "price": 89.74
    },
    {
@@ -2582,6 +2582,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:macro": [
@@ -2643,16 +2653,6 @@
    {
     "said": "SELL",
     "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
     "price": 89.74
    },
    {
@@ -2684,6 +2684,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:special": [
@@ -2713,16 +2723,6 @@
     "price": 90.83
    },
    {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
     "said": "BUY",
     "right": false,
     "price": 90.83
@@ -2786,6 +2786,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "BUY",
+    "right": false,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:trend": [
@@ -2795,16 +2805,6 @@
     "price": 90.83
    },
    {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
-    "said": "SELL",
-    "right": true,
-    "price": 90.83
-   },
-   {
     "said": "BUY",
     "right": false,
     "price": 90.83
@@ -2888,6 +2888,16 @@
     "said": "SELL",
     "right": true,
     "price": 87.71
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.44
+   },
+   {
+    "said": "SELL",
+    "right": true,
+    "price": 87.5
    }
   ],
   "OIL:inspector": [
@@ -2969,16 +2979,6 @@
    {
     "said": "REMOVED SELL",
     "right": false,
-    "price": 90.83
-   },
-   {
-    "said": "REMOVED SELL",
-    "right": false,
-    "price": 90.83
-   },
-   {
-    "said": "REMOVED SELL",
-    "right": false,
     "price": 89.74
    },
    {
@@ -2990,6 +2990,16 @@
     "said": "REMOVED SELL",
     "right": true,
     "price": 88.12
+   },
+   {
+    "said": "REMOVED SELL",
+    "right": false,
+    "price": 87.44
+   },
+   {
+    "said": "REMOVED SELL",
+    "right": false,
+    "price": 87.5
    }
   ],
   "OIL:levels": [
@@ -6909,7 +6919,8 @@
    },
    "inspector_removed": {
     "mood": "SELL"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794240143.6809871,
@@ -7045,7 +7056,8 @@
    },
    "inspector_removed": {
     "macro": "SELL"
-   }
+   },
+   "checked": true
   },
   {
    "time": 1794250345.9657533,
@@ -7640,6 +7652,73 @@
     "time_machine": "SELL"
    },
    "inspector_removed": {}
+  },
+  {
+   "time": 1794298461.1988418,
+   "market": "BTC",
+   "price": 74713.85,
+   "atr": 355.5413,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "SELL",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {}
+  },
+  {
+   "time": 1794298471.8661363,
+   "market": "GOLD",
+   "price": 4121.8,
+   "atr": 13.8286,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "levels": "WAIT",
+    "volatility": "SELL",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "WAIT",
+    "macro": "BUY",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {
+    "macro": "BUY"
+   }
+  },
+  {
+   "time": 1794298476.8981829,
+   "market": "OIL",
+   "price": 85.34,
+   "atr": 0.8464,
+   "votes": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "levels": "WAIT",
+    "volatility": "WAIT",
+    "daily_view": "SELL",
+    "news": "SELL",
+    "mood": "SELL",
+    "macro": "SELL",
+    "special": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   },
+   "inspector_removed": {
+    "mood": "SELL"
+   }
   }
  ],
  "trades": [
@@ -7721,7 +7800,7 @@
   }
  ],
  "last_oi": {
-  "okx": 34924.0
+  "okx": 35009.0
  },
  "last_weekly": "2026-11-09"
 }
