@@ -7,6 +7,8 @@ Shows each version: no filter, + RSI, + RSI + 4h filter."""
 import os, numpy as np, pandas as pd, requests, yfinance as yf
 
 MKTS = {"Bitcoin": ("BTC-USD", 0.12), "Gold": ("GC=F", 0.05), "US Oil": ("CL=F", 0.10)}
+CAPITAL = 20000; RISK_RS = CAPITAL * 0.005      # Rs 100 risk per trade (0.5%)
+BRICKS = [0.5, 0.75, 1.0, 1.5]                  # brick sizes tested (x ATR)
 TOK = os.getenv("TG_TOKEN", ""); CHAT = os.getenv("TG_CHAT", "")
 
 def send(t):
@@ -68,9 +70,9 @@ def htf_trend(df, base_index):
     s = pd.Series(t, index=h.index + pd.Timedelta(hours=4))      # known only after the 4h candle closes
     return s.reindex(base_index, method="ffill").fillna(0).astype(int).values
 
-def backtest(df, fee, use_rsi, use_htf, t4):
+def backtest(df, fee, use_rsi, use_htf, t4, bX=1.0):
     O, H, L, C = (df[c].values for c in ("Open", "High", "Low", "Close"))
-    tr, line, rsi = renko(df)
+    tr, line, rsi = renko(df, bX=bX)
     n = len(C); rs = []; i = 30
     while i < n - 2:
         up = tr[i] == 1 and tr[i-1] == -1; dn = tr[i] == -1 and tr[i-1] == 1
@@ -93,10 +95,13 @@ def backtest(df, fee, use_rsi, use_htf, t4):
 def fmt(rs):
     if not rs: return "0 trades"
     rs = np.array(rs)
-    return f"{len(rs)} trades, won {(rs > 0).mean()*100:.0f}%, total {rs.sum():+.1f}R"
+    return (f"{len(rs)} trades, won {(rs > 0).mean()*100:.0f}%, total {rs.sum():+.1f}R = "
+            f"Rs {rs.sum() * RISK_RS:+,.0f}")
 
 def main():
-    out = ["RENKO MAHAKAAL TEST (Renko trend + Renko RSI + 4h filter, fees included)", ""]
+    out = ["RENKO MAHAKAAL TEST v2 (fees included)",
+           f"Money: Rs {CAPITAL:,} capital, Rs {RISK_RS:,.0f} risk per trade.", ""]
+    best = None
     for name, (tk, fee) in MKTS.items():
         out.append(f"== {name} ==")
         for tf in ("15m", "1h", "4h"):
@@ -106,15 +111,25 @@ def main():
                 t4 = htf_trend(raw, df.index)
                 days = (df.index[-1] - df.index[0]).days
                 out.append(f"{tf} ({days} days):")
-                out.append(f"   only Renko trend: {fmt(backtest(df, fee, False, False, t4))}")
-                out.append(f"   + Renko RSI: {fmt(backtest(df, fee, True, False, t4))}")
-                if tf != "4h":
-                    out.append(f"   + RSI + 4h trend: {fmt(backtest(df, fee, True, True, t4))}")
+                for b in BRICKS:
+                    vers = [("trend", False, False), ("+RSI", True, False)]
+                    if tf != "4h":
+                        vers.append(("+RSI+4h", True, True))
+                    for label, ur, uh in vers:
+                        rs = backtest(df, fee, ur, uh, t4, b)
+                        out.append(f"  brick {b} {label}: {fmt(rs)}")
+                        if len(rs) >= 30 and (best is None or sum(rs) > best[0]):
+                            best = (sum(rs), f"{name} {tf} brick {b} {label}", len(rs))
             except Exception as e:
                 out.append(f"{tf}: error {type(e).__name__}: {e}")
         out.append("")
-    out.append("Best = biggest total R with 30+ trades. 15m has only ~60 days of data.")
+    if best:
+        out.append(f"BEST (30+ trades): {best[1]} - {best[2]} trades, {best[0]:+.1f}R = Rs {best[0] * RISK_RS:+,.0f}")
+    else:
+        out.append("BEST: no setting had 30+ trades.")
+    out.append("15m has only ~60 days of data, so its numbers are weak.")
     send("\n".join(out))
+
 
 if __name__ == "__main__":
     main()
