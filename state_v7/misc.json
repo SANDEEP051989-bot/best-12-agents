@@ -154,16 +154,16 @@
    "why": "only 2 SELL votes (need 6)"
   },
   "GOLD": {
-   "time": "2026-11-10T05:27:21",
-   "decision": "WAIT",
-   "price": 4120.2001953125,
-   "why": "no trend"
+   "time": "2026-11-10T06:27:51",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (148 min)"
   },
   "OIL": {
-   "time": "2026-11-10T05:27:21",
-   "decision": "WAIT",
-   "price": 85.80999755859375,
-   "why": "no valid stop: the stop would need 5.2x ATR (more than 2.0x)"
+   "time": "2026-11-10T06:27:51",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (148 min)"
   }
  },
  "last_report_sent": {
