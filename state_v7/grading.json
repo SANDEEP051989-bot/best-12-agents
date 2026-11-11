@@ -851,6 +851,40 @@
    "trend": "DOWN",
    "fill_after": "2026-11-11T12:19:50",
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|momentum|final",
+   "mkt": "BTC",
+   "agent": "momentum",
+   "kind": "final",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-11T12:00:00",
+   "stop": 74468.79516565886,
+   "target": 72516.92529368227,
+   "dist": 650.6232906588594,
+   "cost_r": 0.1361491473204054,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T12:58:35",
+   "flag": "",
+   "rule_id": "mom.pullback_down"
+  },
+  {
+   "key": "BTC|momentum|rule",
+   "mkt": "BTC",
+   "agent": "momentum",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-11T12:00:00",
+   "stop": 74468.79516565886,
+   "target": 72516.92529368227,
+   "dist": 650.6232906588594,
+   "cost_r": 0.1361491473204054,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T12:58:35",
+   "rule_id": "mom.pullback_down",
+   "chop": true
   }
  ],
  "graded": [
@@ -6002,6 +6036,24 @@
     "volatility": "WAIT",
     "levels": "WAIT",
     "special": "BUY",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-11T12:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "SELL",
+    "volatility": "WAIT",
+    "levels": "BUY",
+    "special": "WAIT",
     "macro": "WAIT",
     "news": "WAIT",
     "mood": "WAIT",
