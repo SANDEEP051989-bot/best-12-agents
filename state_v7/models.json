@@ -73,26 +73,25 @@
   "2026-11-10|gemini|503": 2
  },
  "discovered": {
-  "day": "2026-11-10",
+  "day": "2026-11-11",
   "models": {
    "groq": [
+    "qwen/qwen3.8-27b",
+    "whisper-large-v3-turbo",
     "meta-llama/llama-prompt-guard-2-22m",
     "allam-2-7b",
-    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
+    "openai/gpt-oss-120b",
     "openai/gpt-oss-safeguard-20b",
-    "whisper-large-v3-turbo",
-    "canopylabs/orpheus-v1-english",
+    "meta-llama/llama-prompt-guard-2-86m",
     "canopylabs/orpheus-arabic-saudi",
     "whisper-large-v3",
-    "openai/gpt-oss-120b",
-    "meta-llama/llama-prompt-guard-2-86m",
-    "openai/gpt-oss-20b"
+    "canopylabs/orpheus-v1-english"
    ],
    "openrouter": [
     "thinkingmachines/inkling-2-small:free",
     "liquid/lfm-3-1.7b:free",
     "recursive/flint-v1.0:free",
-    "xingchen-agi/xing4.0-29b-a4b:free",
     "nvidia/nemotron-3.5-super-vl:free",
     "dots-studio/dots-3-note-preview:free",
     "liquid/lfm-2.5-2.6b:free",
@@ -140,6 +139,7 @@
     "gemini-3.7-flash",
     "gemini-3.8-flash",
     "gemini-4-argon",
+    "gemini-4-carbon",
     "lyria-3-clip-preview",
     "lyria-3-pro-preview",
     "lyria-3.5",
