@@ -144,14 +144,14 @@
  "last_bar": {
   "GOLD": "2026-11-11T19:00:00",
   "OIL": "2026-11-11T19:00:00",
-  "BTC": "2026-11-11T19:00:00"
+  "BTC": "2026-11-11T20:00:00"
  },
  "last_decision": {
   "BTC": {
-   "time": "2026-11-11T20:00:31",
+   "time": "2026-11-11T21:37:55",
    "decision": "WAIT",
-   "price": 74334.2109375,
-   "why": "strong zone only 0.74R away"
+   "price": 74574.4375,
+   "why": "only 1 SELL votes (need 6)"
   },
   "GOLD": {
    "time": "2026-11-11T21:00:59",
