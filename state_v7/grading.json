@@ -823,6 +823,40 @@
    "cost_r": 0.0969443250289074,
    "trend": "DOWN",
    "fill_after": "2026-11-11T10:20:50"
+  },
+  {
+   "key": "BTC|levels|final",
+   "mkt": "BTC",
+   "agent": "levels",
+   "kind": "final",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-11T10:00:00",
+   "stop": 73239.48017150906,
+   "target": 75433.82871948188,
+   "dist": 731.449515990942,
+   "cost_r": 0.1213550814983371,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T10:52:04",
+   "flag": "",
+   "rule_id": "lvl.break"
+  },
+  {
+   "key": "BTC|levels|rule",
+   "mkt": "BTC",
+   "agent": "levels",
+   "kind": "rule",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-11T10:00:00",
+   "stop": 73239.48017150906,
+   "target": 75433.82871948188,
+   "dist": 731.449515990942,
+   "cost_r": 0.1213550814983371,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T10:52:04",
+   "rule_id": "lvl.break",
+   "chop": true
   }
  ],
  "graded": [
@@ -5722,6 +5756,24 @@
     "volatility": "WAIT",
     "levels": "WAIT",
     "special": "BUY",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-11T10:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "BUY",
+    "special": "WAIT",
     "macro": "WAIT",
     "news": "WAIT",
     "mood": "WAIT",
