@@ -142,8 +142,8 @@
  },
  "outbox": [],
  "last_bar": {
-  "GOLD": "2026-11-11T03:00:00",
-  "OIL": "2026-11-11T03:00:00",
+  "GOLD": "2026-11-11T04:00:00",
+  "OIL": "2026-11-11T04:00:00",
   "BTC": "2026-11-11T05:00:00"
  },
  "last_decision": {
@@ -154,16 +154,16 @@
    "why": "strong zone only 0.09R away"
   },
   "GOLD": {
-   "time": "2026-11-11T05:30:07",
-   "decision": "MARKET CLOSED",
-   "price": null,
-   "why": "market closed or data old (270 min)"
+   "time": "2026-11-11T06:29:41",
+   "decision": "WAIT",
+   "price": 4049.60009765625,
+   "why": "strong zone only 0.95R away"
   },
   "OIL": {
-   "time": "2026-11-11T05:30:07",
-   "decision": "MARKET CLOSED",
-   "price": null,
-   "why": "market closed or data old (270 min)"
+   "time": "2026-11-11T06:29:41",
+   "decision": "WAIT",
+   "price": 86.66999816894531,
+   "why": "strong zone only 0.17R away"
   }
  },
  "last_report_sent": {
