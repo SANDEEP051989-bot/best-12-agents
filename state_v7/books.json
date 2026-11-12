@@ -30,12 +30,14 @@
     "risk_rs": 100.0,
     "open_day": "2026-11-12",
     "status": "open",
-    "events_sent": [],
+    "events_sent": [
+     "T2"
+    ],
     "trail_atr": 3.0,
     "fill_after": "2026-11-11T18:47:53",
     "daily": "DOWN",
-    "fill": 74434.2890625,
-    "stop_now": 75169.77026262891
+    "fill": 74437.6484375,
+    "stop_now": 73703.32348737109
    },
    "GOLD": {
     "mkt": "GOLD",
