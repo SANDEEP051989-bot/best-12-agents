@@ -142,8 +142,8 @@
  },
  "outbox": [],
  "last_bar": {
-  "GOLD": "2026-11-12T16:00:00",
-  "OIL": "2026-11-12T16:00:00",
+  "GOLD": "2026-11-12T17:00:00",
+  "OIL": "2026-11-12T17:00:00",
   "BTC": "2026-11-12T17:00:00"
  },
  "last_decision": {
@@ -154,22 +154,22 @@
    "why": "no valid stop: the stop would need 6.3x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-12T18:23:08",
+   "time": "2026-11-12T19:29:55",
    "decision": "WAIT",
-   "price": 3883.5,
-   "why": "extreme volatility"
+   "price": 3878.5,
+   "why": "no valid stop: the stop would need 6.6x ATR (more than 2.0x)"
   },
   "OIL": {
-   "time": "2026-11-12T18:23:08",
+   "time": "2026-11-12T19:29:55",
    "decision": "WAIT",
-   "price": 87.33000183105469,
-   "why": "strong zone only 0.00R away"
+   "price": 88.02999877929688,
+   "why": "no trend"
   }
  },
  "last_report_sent": {
   "BTC": "2026-11-12T18:00:00",
-  "GOLD": "2026-11-12T16:00:00",
-  "OIL": "2026-11-12T16:00:00"
+  "GOLD": "2026-11-12T18:00:00",
+  "OIL": "2026-11-12T18:00:00"
  },
  "last_daily_pdf": "2026-11-12"
 }
