@@ -1,55 +1,6 @@
 {
  "pending": [
   {
-   "key": "BTC|coin|coin",
-   "mkt": "BTC",
-   "agent": "coin",
-   "kind": "coin",
-   "d": "BUY",
-   "model": "code",
-   "signal_ts": "2026-11-11T09:00:00",
-   "stop": 73003.66113970241,
-   "target": 75123.28709559518,
-   "dist": 706.5419852975901,
-   "cost_r": 0.12519035753090396,
-   "trend": "DOWN",
-   "fill_after": "2026-11-11T09:50:18"
-  },
-  {
-   "key": "BTC|levels|final",
-   "mkt": "BTC",
-   "agent": "levels",
-   "kind": "final",
-   "d": "BUY",
-   "model": "code",
-   "signal_ts": "2026-11-11T10:00:00",
-   "stop": 73239.48017150906,
-   "target": 75433.82871948188,
-   "dist": 731.449515990942,
-   "cost_r": 0.1213550814983371,
-   "trend": "DOWN",
-   "fill_after": "2026-11-11T10:52:04",
-   "flag": "",
-   "rule_id": "lvl.break"
-  },
-  {
-   "key": "BTC|levels|rule",
-   "mkt": "BTC",
-   "agent": "levels",
-   "kind": "rule",
-   "d": "BUY",
-   "model": "code",
-   "signal_ts": "2026-11-11T10:00:00",
-   "stop": 73239.48017150906,
-   "target": 75433.82871948188,
-   "dist": 731.449515990942,
-   "cost_r": 0.1213550814983371,
-   "trend": "DOWN",
-   "fill_after": "2026-11-11T10:52:04",
-   "rule_id": "lvl.break",
-   "chop": true
-  },
-  {
    "key": "BTC|trend|final",
    "mkt": "BTC",
    "agent": "trend",
@@ -808,6 +759,21 @@
    "trend": "DOWN",
    "fill_after": "2026-11-12T09:20:37",
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-12T09:00:00",
+   "stop": 72833.51798207565,
+   "target": 74549.3468483487,
+   "dist": 571.9429554243504,
+   "cost_r": 0.15401282993274143,
+   "trend": "DOWN",
+   "fill_after": "2026-11-12T09:52:47"
   }
  ],
  "graded": [
@@ -6026,6 +5992,64 @@
    "r": -0.553,
    "hit": false,
    "why": "stop"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-11T09:00:00",
+   "stop": 73003.66113970241,
+   "target": 75123.28709559518,
+   "dist": 706.5419852975901,
+   "cost_r": 0.12519035753090396,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T09:50:18",
+   "r": -0.569,
+   "hit": false,
+   "why": "time"
+  },
+  {
+   "key": "BTC|levels|final",
+   "mkt": "BTC",
+   "agent": "levels",
+   "kind": "final",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-11T10:00:00",
+   "stop": 73239.48017150906,
+   "target": 75433.82871948188,
+   "dist": 731.449515990942,
+   "cost_r": 0.1213550814983371,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T10:52:04",
+   "flag": "",
+   "rule_id": "lvl.break",
+   "r": -1.121,
+   "hit": false,
+   "why": "stop"
+  },
+  {
+   "key": "BTC|levels|rule",
+   "mkt": "BTC",
+   "agent": "levels",
+   "kind": "rule",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-11T10:00:00",
+   "stop": 73239.48017150906,
+   "target": 75433.82871948188,
+   "dist": 731.449515990942,
+   "cost_r": 0.1213550814983371,
+   "trend": "DOWN",
+   "fill_after": "2026-11-11T10:52:04",
+   "rule_id": "lvl.break",
+   "chop": true,
+   "r": -1.121,
+   "hit": false,
+   "why": "stop"
   }
  ],
  "vote_log": [
@@ -8768,6 +8792,24 @@
   {
    "mkt": "OIL",
    "ts": "2026-11-12T08:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-12T09:00:00",
    "ai": false,
    "v": {
     "trend": "SELL",
