@@ -154,16 +154,16 @@
    "why": "no valid stop: the stop would need 2.7x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-12T04:30:57",
-   "decision": "WAIT",
-   "price": 3988.199951171875,
-   "why": "no valid stop: the stop would need 6.5x ATR (more than 2.0x)"
+   "time": "2026-11-12T05:32:31",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (213 min)"
   },
   "OIL": {
-   "time": "2026-11-12T04:30:57",
-   "decision": "WAIT",
-   "price": 85.6500015258789,
-   "why": "no valid stop: the stop would need 5.2x ATR (more than 2.0x)"
+   "time": "2026-11-12T05:32:31",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (213 min)"
   }
  },
  "last_report_sent": {
