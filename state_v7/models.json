@@ -83,22 +83,23 @@
   "2026-11-11|openrouter|429": 18
  },
  "discovered": {
-  "day": "2026-11-11",
+  "day": "2026-11-12",
   "models": {
    "groq": [
+    "openai/gpt-oss-20b",
     "qwen/qwen3.8-27b",
     "whisper-large-v3-turbo",
-    "meta-llama/llama-prompt-guard-2-22m",
     "allam-2-7b",
-    "openai/gpt-oss-20b",
-    "openai/gpt-oss-120b",
     "openai/gpt-oss-safeguard-20b",
-    "meta-llama/llama-prompt-guard-2-86m",
+    "meta-llama/llama-prompt-guard-2-22m",
+    "openai/gpt-oss-120b",
     "canopylabs/orpheus-arabic-saudi",
-    "whisper-large-v3",
-    "canopylabs/orpheus-v1-english"
+    "canopylabs/orpheus-v1-english",
+    "meta-llama/llama-prompt-guard-2-86m",
+    "whisper-large-v3"
    ],
    "openrouter": [
+    "baidu/ernie-5.5-flash-preview:free",
     "thinkingmachines/inkling-2-small:free",
     "liquid/lfm-3-1.7b:free",
     "recursive/flint-v1.0:free",
