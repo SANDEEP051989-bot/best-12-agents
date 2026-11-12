@@ -144,14 +144,14 @@
  "last_bar": {
   "GOLD": "2026-11-12T03:00:00",
   "OIL": "2026-11-12T03:00:00",
-  "BTC": "2026-11-12T04:00:00"
+  "BTC": "2026-11-12T05:00:00"
  },
  "last_decision": {
   "BTC": {
-   "time": "2026-11-12T05:00:53",
+   "time": "2026-11-12T06:04:34",
    "decision": "WAIT",
-   "price": 73640.90625,
-   "why": "no valid stop: the stop would need 2.7x ATR (more than 2.0x)"
+   "price": 73493.9609375,
+   "why": "no valid stop: the stop would need 3.1x ATR (more than 2.0x)"
   },
   "GOLD": {
    "time": "2026-11-12T05:32:31",
