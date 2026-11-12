@@ -838,6 +838,58 @@
    "trend": "DOWN",
    "fill_after": "2026-11-12T16:54:20",
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|special|wait",
+   "mkt": "BTC",
+   "agent": "special",
+   "kind": "wait",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-12T17:00:00",
+   "stop": 72547.68685971819,
+   "target": 70383.89190556364,
+   "dist": 721.2649847181829,
+   "cost_r": 0.11950074948346114,
+   "trend": "DOWN",
+   "fill_after": "2026-11-12T18:46:21",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|bear|final",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "final",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-12T17:00:00",
+   "stop": 72547.68685971819,
+   "target": 70383.89190556364,
+   "dist": 721.2649847181829,
+   "cost_r": 0.11950074948346114,
+   "trend": "DOWN",
+   "fill_after": "2026-11-12T18:46:21",
+   "flag": "",
+   "rule_id": "bear.code",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|bear|rule",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-12T17:00:00",
+   "stop": 72547.68685971819,
+   "target": 70383.89190556364,
+   "dist": 721.2649847181829,
+   "cost_r": 0.11950074948346114,
+   "trend": "DOWN",
+   "fill_after": "2026-11-12T18:46:21",
+   "rule_id": "bear.code",
+   "chop": true,
+   "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
  "graded": [
@@ -10551,6 +10603,24 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-12T17:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
