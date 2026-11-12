@@ -35,7 +35,9 @@
     "events_sent": [],
     "trail_atr": 3.0,
     "fill_after": "2026-11-12T15:18:03",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 86.63999938964844,
+    "stop_now": 87.79366847858155
    }
   },
   "closed": [
