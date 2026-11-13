@@ -724,6 +724,22 @@
    "trend": "DOWN",
    "fill_after": "2026-11-13T07:06:11",
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|time_machine|block",
+   "mkt": "BTC",
+   "agent": "time_machine",
+   "kind": "tm_block",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-13T07:00:00",
+   "stop": 69528.23746865896,
+   "target": 66496.21256268209,
+   "dist": 1010.6749686589567,
+   "cost_r": 0.08135263813755812,
+   "trend": "DOWN",
+   "fill_after": "2026-11-13T08:49:24",
+   "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
  "graded": [
@@ -12674,6 +12690,24 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-13T07:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
