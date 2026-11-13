@@ -143,7 +143,7 @@
  "outbox": [],
  "last_bar": {
   "GOLD": "2026-11-12T21:00:00",
-  "OIL": "2026-11-12T21:00:00",
+  "OIL": "2026-11-12T22:00:00",
   "BTC": "2026-11-12T22:00:00"
  },
  "last_decision": {
@@ -154,13 +154,13 @@
    "why": "no valid stop: the stop would need 8.1x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-12T23:16:43",
-   "decision": "WAIT",
-   "price": 3881.699951171875,
-   "why": "strong zone only 0.00R away"
+   "time": "2026-11-13T00:17:29",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (137 min)"
   },
   "OIL": {
-   "time": "2026-11-12T23:16:43",
+   "time": "2026-11-13T00:17:29",
    "decision": "WAIT",
    "price": 88.69999694824219,
    "why": "no trend"

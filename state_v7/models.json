@@ -83,27 +83,29 @@
   "2026-11-11|openrouter|429": 18
  },
  "discovered": {
-  "day": "2026-11-12",
+  "day": "2026-11-13",
   "models": {
    "groq": [
-    "openai/gpt-oss-20b",
-    "qwen/qwen3.8-27b",
-    "whisper-large-v3-turbo",
-    "allam-2-7b",
-    "openai/gpt-oss-safeguard-20b",
     "meta-llama/llama-prompt-guard-2-22m",
-    "openai/gpt-oss-120b",
     "canopylabs/orpheus-arabic-saudi",
+    "allam-2-7b",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
+    "whisper-large-v3",
+    "openai/gpt-oss-120b",
     "canopylabs/orpheus-v1-english",
     "meta-llama/llama-prompt-guard-2-86m",
-    "whisper-large-v3"
+    "whisper-large-v3-turbo",
+    "openai/gpt-oss-safeguard-20b"
    ],
    "openrouter": [
     "baidu/ernie-5.5-flash-preview:free",
     "thinkingmachines/inkling-2-small:free",
     "liquid/lfm-3-1.7b:free",
+    "particle-ai/particle-1:free",
     "recursive/flint-v1.0:free",
     "nvidia/nemotron-3.5-super-vl:free",
+    "apodex/apodex-1.1-mini:free",
     "dots-studio/dots-3-note-preview:free",
     "liquid/lfm-2.5-2.6b:free",
     "nvidia/nemotron-3.5-lightning:free",
@@ -151,6 +153,7 @@
     "gemini-3.8-flash",
     "gemini-4-argon",
     "gemini-4-carbon",
+    "gemini-4-hydrogen",
     "lyria-3-clip-preview",
     "lyria-3-pro-preview",
     "lyria-3.5",
