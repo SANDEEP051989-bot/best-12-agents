@@ -615,6 +615,22 @@
    "fill_after": "2026-11-13T17:17:14",
    "rule_id": "mac.oil_sell",
    "chop": false
+  },
+  {
+   "key": "BTC|power_trend|test",
+   "mkt": "BTC",
+   "agent": "power_trend",
+   "kind": "power",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-13T16:00:00",
+   "stop": 69605.19218450505,
+   "target": 66704.2484434899,
+   "dist": 966.9812470050558,
+   "cost_r": 0.08517833554694504,
+   "trend": "DOWN",
+   "fill_after": "2026-11-13T17:43:54",
+   "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
  "graded": [
@@ -13571,6 +13587,24 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-13T16:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
