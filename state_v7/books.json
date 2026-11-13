@@ -34,7 +34,9 @@
     "events_sent": [],
     "trail_atr": 2.5,
     "fill_after": "2026-11-12T23:06:43",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 3884.10009765625,
+    "stop_now": 3908.26483624692
    },
    "OIL": {
     "mkt": "OIL",
