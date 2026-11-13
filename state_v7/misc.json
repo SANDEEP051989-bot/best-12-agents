@@ -142,8 +142,8 @@
  },
  "outbox": [],
  "last_bar": {
-  "GOLD": "2026-11-13T18:00:00",
-  "OIL": "2026-11-13T18:00:00",
+  "GOLD": "2026-11-13T19:00:00",
+  "OIL": "2026-11-13T19:00:00",
   "BTC": "2026-11-13T19:00:00"
  },
  "last_decision": {
@@ -154,15 +154,15 @@
    "why": "no valid stop: the stop would need 2.2x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-13T19:30:00",
+   "time": "2026-11-13T21:22:50",
    "decision": "WAIT",
-   "price": 3884.300048828125,
-   "why": "too close to Friday's close (gold and WTI are closed before the weekend)"
+   "price": 3878.5,
+   "why": "the next candle opens only after a market break (weekend or holiday) - the si..."
   },
   "OIL": {
-   "time": "2026-11-13T19:30:00",
+   "time": "2026-11-13T21:22:50",
    "decision": "WAIT",
-   "price": 88.7699966430664,
+   "price": 88.87999725341797,
    "why": "no trend"
   }
  },
