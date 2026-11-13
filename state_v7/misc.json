@@ -142,8 +142,8 @@
  },
  "outbox": [],
  "last_bar": {
-  "GOLD": "2026-11-13T00:00:00",
-  "OIL": "2026-11-13T00:00:00",
+  "GOLD": "2026-11-13T01:00:00",
+  "OIL": "2026-11-13T01:00:00",
   "BTC": "2026-11-13T01:00:00"
  },
  "last_decision": {
@@ -154,15 +154,15 @@
    "why": "no valid stop: the stop would need 8.9x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-13T01:45:23",
+   "time": "2026-11-13T03:24:17",
    "decision": "WAIT",
-   "price": 3889.39990234375,
-   "why": "strong zone only 0.07R away"
+   "price": 3911.699951171875,
+   "why": "no valid stop: the stop would need 5.5x ATR (more than 2.0x)"
   },
   "OIL": {
-   "time": "2026-11-13T01:45:23",
+   "time": "2026-11-13T03:24:17",
    "decision": "WAIT",
-   "price": 88.48999786376953,
+   "price": 88.0999984741211,
    "why": "no trend"
   }
  },
