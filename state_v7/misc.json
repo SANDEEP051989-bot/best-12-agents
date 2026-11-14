@@ -154,16 +154,16 @@
    "why": "burst / funding shock - wait one candle"
   },
   "GOLD": {
-   "time": "2026-11-14T15:15:13",
+   "time": "2026-11-14T16:14:05",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (1035 min)"
+   "why": "market closed or data old (1094 min)"
   },
   "OIL": {
-   "time": "2026-11-14T15:15:13",
+   "time": "2026-11-14T16:14:05",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (975 min)"
+   "why": "market closed or data old (1034 min)"
   }
  },
  "last_report_sent": {
