@@ -15057,6 +15057,24 @@
     "bear": "WAIT",
     "time_machine": "WAIT"
    }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-14T13:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "BUY",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
   }
  ]
 }

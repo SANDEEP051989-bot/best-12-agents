@@ -1,7 +1,8 @@
 {
  "skip_until": {
   "gemini|gemini-3.5-flash-lite": "2026-11-10T08:05:00",
-  "openrouter|google/gemma-4-31b-it:free": "2026-11-14T14:53:50"
+  "openrouter|google/gemma-4-31b-it:free": "2026-11-14T14:53:50",
+  "groq|whisper-large-v3": "2026-11-14T15:44:37"
  },
  "fail_streak": {
   "groq|openai/gpt-oss-20b": 0,
@@ -13,16 +14,16 @@
   "openrouter|nvidia/nemotron-3-ultra-550b-a55b:free": 2,
   "gemini|gemini-3.8-flash": 2,
   "groq|meta-llama/llama-prompt-guard-2-22m": 0,
-  "groq|whisper-large-v3": 2
+  "groq|whisper-large-v3": 0
  },
  "swap": {},
  "contra": {
   "2026-W46|trend|Groq openai/gpt-oss-20b": [
-   9,
+   10,
    2
   ],
   "2026-W46|daily_view|Groq openai/gpt-oss-20b": [
-   7,
+   8,
    0
   ],
   "2026-W46|momentum|Groq meta-llama/llama-prompt-guard-2-22m": [
@@ -34,27 +35,27 @@
    0
   ],
   "2026-W46|levels|Groq qwen/qwen3.8-27b": [
-   7,
+   8,
    0
   ],
   "2026-W46|special|Groq openai/gpt-oss-20b": [
-   7,
+   8,
    0
   ],
   "2026-W46|mood|Groq openai/gpt-oss-20b": [
-   6,
-   1
+   8,
+   2
   ],
   "2026-W46|macro|Groq meta-llama/llama-prompt-guard-2-22m": [
    4,
    0
   ],
   "2026-W46|momentum|Gemini gemini-3.5-flash-lite": [
-   5,
+   6,
    0
   ],
   "2026-W46|volatility|Gemini gemini-3.5-flash-lite": [
-   2,
+   3,
    0
   ],
   "2026-W46|macro|Gemini gemini-3.5-flash-lite": [
@@ -82,7 +83,7 @@
   "2026-11-10|gemini|503": 2,
   "2026-11-11|gemini|503": 2,
   "2026-11-11|openrouter|429": 18,
-  "2026-11-14|groq|400": 4,
+  "2026-11-14|groq|400": 6,
   "2026-11-14|openrouter|429": 9
  },
  "discovered": {
