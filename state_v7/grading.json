@@ -14327,6 +14327,24 @@
     "bear": "SELL",
     "time_machine": "WAIT"
    }
+  },
+  {
+   "mkt": "OIL",
+   "ts": "2026-11-13T22:00:00",
+   "ai": false,
+   "v": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "BUY",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
   }
  ]
 }

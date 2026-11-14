@@ -83,31 +83,30 @@
   "2026-11-11|openrouter|429": 18
  },
  "discovered": {
-  "day": "2026-11-13",
+  "day": "2026-11-14",
   "models": {
    "groq": [
+    "whisper-large-v3",
+    "openai/gpt-oss-20b",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-safeguard-20b",
+    "whisper-large-v3-turbo",
+    "meta-llama/llama-prompt-guard-2-86m",
+    "canopylabs/orpheus-v1-english",
     "meta-llama/llama-prompt-guard-2-22m",
     "canopylabs/orpheus-arabic-saudi",
     "allam-2-7b",
-    "qwen/qwen3.8-27b",
-    "openai/gpt-oss-20b",
-    "whisper-large-v3",
-    "openai/gpt-oss-120b",
-    "canopylabs/orpheus-v1-english",
-    "meta-llama/llama-prompt-guard-2-86m",
-    "whisper-large-v3-turbo",
-    "openai/gpt-oss-safeguard-20b"
+    "qwen/qwen3.8-27b"
    ],
    "openrouter": [
+    "inclusionai/ling-3.2-flash:free",
     "baidu/ernie-5.5-flash-preview:free",
     "thinkingmachines/inkling-2-small:free",
     "liquid/lfm-3-1.7b:free",
     "particle-ai/particle-1:free",
     "recursive/flint-v1.0:free",
     "nvidia/nemotron-3.5-super-vl:free",
-    "apodex/apodex-1.1-mini:free",
     "dots-studio/dots-3-note-preview:free",
-    "liquid/lfm-2.5-2.6b:free",
     "nvidia/nemotron-3.5-lightning:free",
     "cohere/north-mini-code:free",
     "nvidia/nemotron-3-ultra-550b-a55b:free",
