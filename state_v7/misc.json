@@ -154,16 +154,16 @@
    "why": "no valid stop: the stop would need 5.5x ATR (more than 2.0x)"
   },
   "GOLD": {
-   "time": "2026-11-14T07:39:36",
+   "time": "2026-11-14T09:21:29",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (580 min)"
+   "why": "market closed or data old (681 min)"
   },
   "OIL": {
-   "time": "2026-11-14T07:39:36",
+   "time": "2026-11-14T09:21:29",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (520 min)"
+   "why": "market closed or data old (621 min)"
   }
  },
  "last_report_sent": {
