@@ -154,16 +154,16 @@
    "why": "extreme volatility"
   },
   "GOLD": {
-   "time": "2026-11-14T03:23:20",
+   "time": "2026-11-14T04:27:35",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (323 min)"
+   "why": "market closed or data old (388 min)"
   },
   "OIL": {
-   "time": "2026-11-14T03:23:20",
+   "time": "2026-11-14T04:27:35",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (263 min)"
+   "why": "market closed or data old (328 min)"
   }
  },
  "last_report_sent": {
