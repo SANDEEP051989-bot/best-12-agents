@@ -938,6 +938,23 @@
    "rule_id": "bear.code",
    "chop": true,
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|bull|final",
+   "mkt": "BTC",
+   "agent": "bull",
+   "kind": "final",
+   "d": "BUY",
+   "model": "Gemini gemini-3.5-flash-lite",
+   "signal_ts": "2026-11-14T12:00:00",
+   "stop": 66180.59905535476,
+   "target": 68468.36438929048,
+   "dist": 762.5884446452382,
+   "cost_r": 0.10534099429918711,
+   "trend": "DOWN",
+   "fill_after": "2026-11-14T13:43:50",
+   "flag": "",
+   "rule_id": "bull.ai"
   }
  ],
  "graded": [
@@ -15020,6 +15037,24 @@
     "mood": "SELL",
     "bull": "WAIT",
     "bear": "SELL",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-14T12:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "BUY",
+    "bear": "WAIT",
     "time_machine": "WAIT"
    }
   }
