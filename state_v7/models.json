@@ -19,11 +19,11 @@
  "swap": {},
  "contra": {
   "2026-W46|trend|Groq openai/gpt-oss-20b": [
-   12,
+   13,
    2
   ],
   "2026-W46|daily_view|Groq openai/gpt-oss-20b": [
-   10,
+   11,
    0
   ],
   "2026-W46|momentum|Groq meta-llama/llama-prompt-guard-2-22m": [
@@ -35,15 +35,15 @@
    0
   ],
   "2026-W46|levels|Groq qwen/qwen3.8-27b": [
-   10,
+   11,
    0
   ],
   "2026-W46|special|Groq openai/gpt-oss-20b": [
-   10,
+   11,
    0
   ],
   "2026-W46|mood|Groq openai/gpt-oss-20b": [
-   10,
+   11,
    2
   ],
   "2026-W46|macro|Groq meta-llama/llama-prompt-guard-2-22m": [
@@ -51,7 +51,7 @@
    0
   ],
   "2026-W46|momentum|Gemini gemini-3.5-flash-lite": [
-   8,
+   9,
    0
   ],
   "2026-W46|volatility|Gemini gemini-3.5-flash-lite": [
@@ -63,7 +63,7 @@
    0
   ],
   "2026-W46|volatility|Groq qwen/qwen3.8-27b": [
-   5,
+   6,
    0
   ],
   "2026-W46|macro|Groq qwen/qwen3.8-27b": [

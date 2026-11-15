@@ -904,6 +904,40 @@
    "fill_after": "2026-11-15T18:37:03",
    "flag": "own judgement",
    "rule_id": "spc.neutral"
+  },
+  {
+   "key": "BTC|bear|final",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "final",
+   "d": "SELL",
+   "model": "Gemini gemini-3.5-flash-lite",
+   "signal_ts": "2026-11-15T19:00:00",
+   "stop": 65917.6583514916,
+   "target": 62889.94892201679,
+   "dist": 1009.2364764916052,
+   "cost_r": 0.07717726029955664,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T20:32:00",
+   "flag": "",
+   "rule_id": "bear.ai"
+  },
+  {
+   "key": "BTC|bear|rule",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-15T19:00:00",
+   "stop": 65917.6583514916,
+   "target": 62889.94892201679,
+   "dist": 1009.2364764916052,
+   "cost_r": 0.07717726029955664,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T20:32:00",
+   "rule_id": "bear.code",
+   "chop": true
   }
  ],
  "graded": [
@@ -16815,6 +16849,24 @@
     "mood": "SELL",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-15T19:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "SELL",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
