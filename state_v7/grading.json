@@ -807,22 +807,6 @@
    "fill_after": "2026-11-14T22:30:42"
   },
   {
-   "key": "BTC|coin|coin",
-   "mkt": "BTC",
-   "agent": "coin",
-   "kind": "coin",
-   "d": "BUY",
-   "model": "code",
-   "signal_ts": "2026-11-14T21:00:00",
-   "stop": 63389.97041326478,
-   "target": 66447.84432972044,
-   "dist": 1019.2913054852174,
-   "cost_r": 0.07582828740573509,
-   "trend": "DOWN",
-   "fill_after": "2026-11-14T22:30:42",
-   "stop_kind": "standard 1.5x ATR (no structure)"
-  },
-  {
    "key": "BTC|momentum|wait",
    "mkt": "BTC",
    "agent": "momentum",
@@ -852,6 +836,22 @@
    "cost_r": 0.07092830961423952,
    "trend": "DOWN",
    "fill_after": "2026-11-14T23:28:30",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-15T00:00:00",
+   "stop": 64529.24892026732,
+   "target": 61151.04122196536,
+   "dist": 1126.069232767319,
+   "cost_r": 0.06756584178933987,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T00:55:23",
    "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
@@ -11151,6 +11151,25 @@
    "r": 1.535,
    "hit": true,
    "why": "target"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-14T21:00:00",
+   "stop": 63389.97041326478,
+   "target": 66447.84432972044,
+   "dist": 1019.2913054852174,
+   "cost_r": 0.07582828740573509,
+   "trend": "DOWN",
+   "fill_after": "2026-11-14T22:30:42",
+   "stop_kind": "standard 1.5x ATR (no structure)",
+   "r": -0.184,
+   "hit": false,
+   "why": "stop"
   }
  ],
  "vote_log": [
@@ -15931,6 +15950,24 @@
    "v": {
     "trend": "SELL",
     "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-15T00:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "SELL",
     "volatility": "WAIT",
     "levels": "WAIT",
     "special": "WAIT",
