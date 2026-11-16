@@ -167,23 +167,6 @@
    "stop_kind": "standard 1.5x ATR (no structure)"
   },
   {
-   "key": "BTC|special|own",
-   "mkt": "BTC",
-   "agent": "special",
-   "kind": "own",
-   "d": "SELL",
-   "model": "Groq openai/gpt-oss-20b",
-   "signal_ts": "2026-11-15T17:00:00",
-   "stop": 65942.12499771365,
-   "target": 61700.38281707271,
-   "dist": 1413.9140602136467,
-   "cost_r": 0.05476560089748277,
-   "trend": "DOWN",
-   "fill_after": "2026-11-15T18:37:03",
-   "flag": "own judgement",
-   "rule_id": "spc.neutral"
-  },
-  {
    "key": "BTC|bear|final",
    "mkt": "BTC",
    "agent": "bear",
@@ -13063,6 +13046,26 @@
    "r": -0.662,
    "hit": false,
    "why": "stop"
+  },
+  {
+   "key": "BTC|special|own",
+   "mkt": "BTC",
+   "agent": "special",
+   "kind": "own",
+   "d": "SELL",
+   "model": "Groq openai/gpt-oss-20b",
+   "signal_ts": "2026-11-15T17:00:00",
+   "stop": 65942.12499771365,
+   "target": 61700.38281707271,
+   "dist": 1413.9140602136467,
+   "cost_r": 0.05476560089748277,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T18:37:03",
+   "flag": "own judgement",
+   "rule_id": "spc.neutral",
+   "r": -0.277,
+   "hit": false,
+   "why": "time"
   }
  ],
  "vote_log": [
@@ -18697,6 +18700,24 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-16T18:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "SELL",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
