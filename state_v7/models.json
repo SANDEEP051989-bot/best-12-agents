@@ -16,7 +16,9 @@
   "groq|meta-llama/llama-prompt-guard-2-22m": 0,
   "groq|whisper-large-v3": 0
  },
- "swap": {},
+ "swap": {
+  "mood": 1
+ },
  "contra": {
   "2026-W46|trend|Groq openai/gpt-oss-20b": [
    14,
@@ -88,20 +90,20 @@
   "2026-11-15|openrouter|429": 15
  },
  "discovered": {
-  "day": "2026-11-15",
+  "day": "2026-11-16",
   "models": {
    "groq": [
-    "qwen/qwen3.8-27b",
+    "canopylabs/orpheus-v1-english",
+    "openai/gpt-oss-safeguard-20b",
     "meta-llama/llama-prompt-guard-2-86m",
+    "openai/gpt-oss-120b",
     "whisper-large-v3-turbo",
-    "openai/gpt-oss-20b",
     "whisper-large-v3",
     "meta-llama/llama-prompt-guard-2-22m",
-    "openai/gpt-oss-120b",
-    "canopylabs/orpheus-v1-english",
     "allam-2-7b",
-    "canopylabs/orpheus-arabic-saudi",
-    "openai/gpt-oss-safeguard-20b"
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
+    "canopylabs/orpheus-arabic-saudi"
    ],
    "openrouter": [
     "inclusionai/ling-3.2-flash:free",
@@ -177,6 +179,7 @@
  },
  "weights": {},
  "swap_done": {
-  "2026-W45": true
+  "2026-W45": true,
+  "2026-W46": true
  }
 }
