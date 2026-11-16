@@ -56,12 +56,14 @@
     "risk_rs": 100.0,
     "open_day": "2026-11-16",
     "status": "open",
-    "events_sent": [],
+    "events_sent": [
+     "T2"
+    ],
     "trail_atr": 2.5,
     "fill_after": "2026-11-16T01:49:35",
     "daily": "DOWN",
     "fill": 3871.199951171875,
-    "stop_now": 3917.81365771434
+    "stop_now": 3868.58624462941
    },
    "OIL": null
   },
