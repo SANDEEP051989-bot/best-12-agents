@@ -33,7 +33,9 @@
     "events_sent": [],
     "trail_atr": 3.0,
     "fill_after": "2026-11-16T19:48:33",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 64991.78125,
+    "stop_now": 65903.8893955077
    },
    "GOLD": {
     "mkt": "GOLD",

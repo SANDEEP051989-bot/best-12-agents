@@ -17,40 +17,6 @@
    "stop_kind": "standard 1.5x ATR (no structure)"
   },
   {
-   "key": "BTC|bear|final",
-   "mkt": "BTC",
-   "agent": "bear",
-   "kind": "final",
-   "d": "SELL",
-   "model": "Gemini gemini-3.5-flash-lite",
-   "signal_ts": "2026-11-15T19:00:00",
-   "stop": 65917.6583514916,
-   "target": 62889.94892201679,
-   "dist": 1009.2364764916052,
-   "cost_r": 0.07717726029955664,
-   "trend": "DOWN",
-   "fill_after": "2026-11-15T20:32:00",
-   "flag": "",
-   "rule_id": "bear.ai"
-  },
-  {
-   "key": "BTC|bear|rule",
-   "mkt": "BTC",
-   "agent": "bear",
-   "kind": "rule",
-   "d": "SELL",
-   "model": "code",
-   "signal_ts": "2026-11-15T19:00:00",
-   "stop": 65917.6583514916,
-   "target": 62889.94892201679,
-   "dist": 1009.2364764916052,
-   "cost_r": 0.07717726029955664,
-   "trend": "DOWN",
-   "fill_after": "2026-11-15T20:32:00",
-   "rule_id": "bear.code",
-   "chop": true
-  },
-  {
    "key": "BTC|coin|coin",
    "mkt": "BTC",
    "agent": "coin",
@@ -983,6 +949,40 @@
    "fill_after": "2026-11-16T21:14:02",
    "rule_id": "spc.flows_support",
    "chop": false
+  },
+  {
+   "key": "BTC|bear|final",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "final",
+   "d": "SELL",
+   "model": "Groq qwen/qwen3.8-27b",
+   "signal_ts": "2026-11-16T20:00:00",
+   "stop": 65875.77111183124,
+   "target": 63290.633557587505,
+   "dist": 861.712518081247,
+   "cost_r": 0.09053700471500419,
+   "trend": "DOWN",
+   "fill_after": "2026-11-16T21:41:18",
+   "flag": "",
+   "rule_id": "bear.ai"
+  },
+  {
+   "key": "BTC|bear|rule",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-16T20:00:00",
+   "stop": 65875.77111183124,
+   "target": 63290.633557587505,
+   "dist": 861.712518081247,
+   "cost_r": 0.09053700471500419,
+   "trend": "DOWN",
+   "fill_after": "2026-11-16T21:41:18",
+   "rule_id": "bear.code",
+   "chop": true
   }
  ],
  "graded": [
@@ -13312,6 +13312,46 @@
    "r": 0.479,
    "hit": false,
    "why": "time"
+  },
+  {
+   "key": "BTC|bear|final",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "final",
+   "d": "SELL",
+   "model": "Gemini gemini-3.5-flash-lite",
+   "signal_ts": "2026-11-15T19:00:00",
+   "stop": 65917.6583514916,
+   "target": 62889.94892201679,
+   "dist": 1009.2364764916052,
+   "cost_r": 0.07717726029955664,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T20:32:00",
+   "flag": "",
+   "rule_id": "bear.ai",
+   "r": 0.001,
+   "hit": false,
+   "why": "time"
+  },
+  {
+   "key": "BTC|bear|rule",
+   "mkt": "BTC",
+   "agent": "bear",
+   "kind": "rule",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-15T19:00:00",
+   "stop": 65917.6583514916,
+   "target": 62889.94892201679,
+   "dist": 1009.2364764916052,
+   "cost_r": 0.07717726029955664,
+   "trend": "DOWN",
+   "fill_after": "2026-11-15T20:32:00",
+   "rule_id": "bear.code",
+   "chop": true,
+   "r": 0.001,
+   "hit": false,
+   "why": "time"
   }
  ],
  "vote_log": [
@@ -19018,6 +19058,24 @@
     "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-16T20:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "SELL",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "SELL",
     "time_machine": "WAIT"
    }
   }
