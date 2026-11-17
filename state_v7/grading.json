@@ -1,21 +1,6 @@
 {
  "pending": [
   {
-   "key": "BTC|coin|coin",
-   "mkt": "BTC",
-   "agent": "coin",
-   "kind": "coin",
-   "d": "SELL",
-   "model": "code",
-   "signal_ts": "2026-11-16T03:00:00",
-   "stop": 65959.15708689789,
-   "target": 63237.45145120424,
-   "dist": 907.2352118978818,
-   "cost_r": 0.08604417600447663,
-   "trend": "DOWN",
-   "fill_after": "2026-11-16T04:05:05"
-  },
-  {
    "key": "BTC|trend|wait",
    "mkt": "BTC",
    "agent": "trend",
@@ -888,6 +873,40 @@
    "cost_r": 0.09996785910089033,
    "trend": "DOWN",
    "fill_after": "2026-11-17T03:58:57",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|special|own",
+   "mkt": "BTC",
+   "agent": "special",
+   "kind": "own",
+   "d": "BUY",
+   "model": "Groq openai/gpt-oss-20b",
+   "signal_ts": "2026-11-17T04:00:00",
+   "stop": 64213.738292629874,
+   "target": 66517.23435224025,
+   "dist": 767.8320198701289,
+   "cost_r": 0.10155591634246924,
+   "trend": "DOWN",
+   "fill_after": "2026-11-17T04:52:40",
+   "flag": "own judgement",
+   "rule_id": "spc.neutral",
+   "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "BUY",
+   "model": "code",
+   "signal_ts": "2026-11-17T04:00:00",
+   "stop": 64213.738292629874,
+   "target": 66517.23435224025,
+   "dist": 767.8320198701289,
+   "cost_r": 0.10155591634246924,
+   "trend": "DOWN",
+   "fill_after": "2026-11-17T04:52:40",
    "stop_kind": "standard 1.5x ATR (no structure)"
   }
  ],
@@ -13616,6 +13635,24 @@
    "r": 1.491,
    "hit": true,
    "why": "target"
+  },
+  {
+   "key": "BTC|coin|coin",
+   "mkt": "BTC",
+   "agent": "coin",
+   "kind": "coin",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-16T03:00:00",
+   "stop": 65959.15708689789,
+   "target": 63237.45145120424,
+   "dist": 907.2352118978818,
+   "cost_r": 0.08604417600447663,
+   "trend": "DOWN",
+   "fill_after": "2026-11-16T04:05:05",
+   "r": -0.344,
+   "hit": false,
+   "why": "time"
   }
  ],
  "vote_log": [
@@ -19392,6 +19429,24 @@
     "macro": "WAIT",
     "news": "WAIT",
     "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-17T04:00:00",
+   "ai": true,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "BUY",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "SELL",
     "bull": "WAIT",
     "bear": "WAIT",
     "time_machine": "WAIT"
