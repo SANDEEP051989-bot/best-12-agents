@@ -11,7 +11,30 @@
  },
  "trend_twin": {
   "open": {
-   "BTC": null,
+   "BTC": {
+    "mkt": "BTC",
+    "d": "SELL",
+    "signal_ts": "2026-11-18T03:00:00",
+    "entry_plan": 64379.8203125,
+    "stop0": 65319.86252887176,
+    "dist": 940.0422163717594,
+    "t": [
+     63439.77809612824,
+     62499.73587975648,
+     61559.69366338472,
+     60619.65144701296
+    ],
+    "cost_r": 0.08218331371667628,
+    "kind": "trend",
+    "risk_pct": 0.5,
+    "risk_rs": 100.0,
+    "open_day": "2026-11-18",
+    "status": "open",
+    "events_sent": [],
+    "trail_atr": 3.0,
+    "fill_after": "2026-11-18T04:02:30",
+    "daily": "DOWN"
+   },
    "GOLD": null,
    "OIL": null
   },
