@@ -9,7 +9,7 @@
   "groq|openai/gpt-oss-20b": 0,
   "gemini|gemini-3.5-flash-lite": 0,
   "groq|qwen/qwen3.8-27b": 0,
-  "openrouter|google/gemma-4-31b-it:free": 0,
+  "openrouter|google/gemma-4-31b-it:free": 2,
   "groq|llama-3.3-70b-versatile": 1,
   "groq|openai/gpt-oss-120b": 0,
   "openrouter|nvidia/nemotron-3-ultra-550b-a55b:free": 2,
@@ -75,15 +75,15 @@
    0
   ],
   "2026-W47|trend|Groq openai/gpt-oss-20b": [
-   9,
+   11,
    1
   ],
   "2026-W47|daily_view|Groq openai/gpt-oss-20b": [
-   8,
+   10,
    0
   ],
   "2026-W47|momentum|Gemini gemini-3.5-flash-lite": [
-   8,
+   10,
    0
   ],
   "2026-W47|volatility|Gemini gemini-3.5-flash-lite": [
@@ -91,11 +91,11 @@
    0
   ],
   "2026-W47|levels|Groq qwen/qwen3.8-27b": [
-   8,
+   10,
    0
   ],
   "2026-W47|special|Groq openai/gpt-oss-20b": [
-   8,
+   10,
    0
   ],
   "2026-W47|macro|Gemini gemini-3.5-flash-lite": [
@@ -104,6 +104,14 @@
   ],
   "2026-W47|mood|Groq openai/gpt-oss-20b": [
    8,
+   0
+  ],
+  "2026-W47|volatility|Groq qwen/qwen3.8-27b": [
+   2,
+   0
+  ],
+  "2026-W47|macro|Groq qwen/qwen3.8-27b": [
+   2,
    0
   ]
  },
@@ -128,7 +136,8 @@
   "2026-11-16|gemini|503": 4,
   "2026-11-17|groq|400": 6,
   "2026-11-17|openrouter|429": 3,
-  "2026-11-17|gemini|503": 1
+  "2026-11-17|gemini|503": 1,
+  "2026-11-19|openrouter|429": 9
  },
  "discovered": {
   "day": "2026-11-19",
