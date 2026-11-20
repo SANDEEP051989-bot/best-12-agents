@@ -870,6 +870,21 @@
    "trend": "DOWN",
    "fill_after": "2026-11-20T10:14:00",
    "stop_kind": "standard 1.5x ATR (no structure)"
+  },
+  {
+   "key": "BTC|power_trend|test",
+   "mkt": "BTC",
+   "agent": "power_trend",
+   "kind": "power",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-20T10:00:00",
+   "stop": 62876.16875647701,
+   "target": 60205.240612045985,
+   "dist": 890.3093814770075,
+   "cost_r": 0.08354739689095475,
+   "trend": "DOWN",
+   "fill_after": "2026-11-20T11:16:47"
   }
  ],
  "graded": [
@@ -25070,6 +25085,24 @@
     "macro": "WAIT",
     "news": "WAIT",
     "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "BTC",
+   "ts": "2026-11-20T10:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "SELL",
     "bull": "WAIT",
     "bear": "WAIT",
     "time_machine": "WAIT"
