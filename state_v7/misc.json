@@ -154,16 +154,16 @@
    "why": "extreme volatility"
   },
   "GOLD": {
-   "time": "2026-11-20T18:46:42",
-   "decision": "WAIT",
-   "price": 3531.699951171875,
-   "why": "extreme volatility"
+   "time": "2026-11-21T00:55:53",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (176 min)"
   },
   "OIL": {
-   "time": "2026-11-20T18:46:42",
-   "decision": "WAIT",
-   "price": 82.79000091552734,
-   "why": "too close to Friday's close (gold and WTI are closed before the weekend)"
+   "time": "2026-11-21T00:55:53",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (176 min)"
   }
  },
  "last_report_sent": {
