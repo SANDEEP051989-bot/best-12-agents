@@ -154,16 +154,16 @@
    "why": "only 3 SELL votes (need 6)"
   },
   "GOLD": {
-   "time": "2026-11-21T00:55:53",
+   "time": "2026-11-21T08:43:17",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (176 min)"
+   "why": "market closed or data old (643 min)"
   },
   "OIL": {
-   "time": "2026-11-21T00:55:53",
+   "time": "2026-11-21T08:43:17",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (176 min)"
+   "why": "market closed or data old (643 min)"
   }
  },
  "last_report_sent": {
