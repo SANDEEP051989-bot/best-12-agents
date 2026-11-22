@@ -6,7 +6,7 @@
  },
  "flows": {
   "day": "2026-11-22",
-  "tried": "2026-11-22T02:36:24",
+  "tried": "2026-11-22T10:15:19",
   "cot_GOLD": {
    "net": 102942.0,
    "rank": 0.2
@@ -24,52 +24,42 @@
  "events": {
   "events": [
    {
-    "title": "Fed Chairman Warsh Speaks",
-    "time": "2026-11-16T17:00:00",
+    "title": "Flash Manufacturing PMI",
+    "time": "2026-11-23T14:45:00",
+    "impact": "Medium"
+   },
+   {
+    "title": "Flash Services PMI",
+    "time": "2026-11-23T14:45:00",
+    "impact": "Medium"
+   },
+   {
+    "title": "CB Consumer Confidence",
+    "time": "2026-11-24T15:00:00",
+    "impact": "Medium"
+   },
+   {
+    "title": "Core PCE Price Index m/m",
+    "time": "2026-11-25T13:30:00",
     "impact": "High"
    },
    {
-    "title": "Core Retail Sales m/m",
-    "time": "2026-11-17T13:30:00",
+    "title": "Prelim GDP q/q",
+    "time": "2026-11-25T13:30:00",
     "impact": "High"
    },
    {
-    "title": "Retail Sales m/m",
-    "time": "2026-11-17T13:30:00",
-    "impact": "High"
-   },
-   {
-    "title": "FOMC Meeting Minutes",
-    "time": "2026-11-18T19:00:00",
-    "impact": "High"
-   },
-   {
-    "title": "Philly Fed Manufacturing Index",
-    "time": "2026-11-19T13:30:00",
+    "title": "Prelim GDP Price Index q/q",
+    "time": "2026-11-25T13:30:00",
     "impact": "Medium"
    },
    {
     "title": "Unemployment Claims",
-    "time": "2026-11-19T13:30:00",
-    "impact": "Medium"
-   },
-   {
-    "title": "Revised UoM Consumer Sentiment",
-    "time": "2026-11-20T15:00:00",
-    "impact": "Medium"
-   },
-   {
-    "title": "Revised UoM Inflation Expectations",
-    "time": "2026-11-20T15:00:00",
-    "impact": "Medium"
-   },
-   {
-    "title": "President Trump Speaks",
-    "time": "2026-11-20T17:00:00",
+    "time": "2026-11-25T13:30:00",
     "impact": "Medium"
    }
   ],
-  "fetched": "2026-11-21T22:19:18"
+  "fetched": "2026-11-22T10:15:19"
  },
  "news_seen": {
   "BTC|29d084f57fea": "2026-11-21T01:25:52",
