@@ -154,16 +154,16 @@
    "why": "strong zone only 0.00R away"
   },
   "GOLD": {
-   "time": "2026-11-21T22:19:18",
+   "time": "2026-11-22T02:36:24",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (1459 min)"
+   "why": "market closed or data old (1716 min)"
   },
   "OIL": {
-   "time": "2026-11-21T22:19:18",
+   "time": "2026-11-22T02:36:24",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (1459 min)"
+   "why": "market closed or data old (1716 min)"
   }
  },
  "last_report_sent": {

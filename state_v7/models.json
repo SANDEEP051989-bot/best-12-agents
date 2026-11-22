@@ -142,20 +142,20 @@
   "2026-11-21|openrouter|429": 3
  },
  "discovered": {
-  "day": "2026-11-21",
+  "day": "2026-11-22",
   "models": {
    "groq": [
-    "canopylabs/orpheus-v1-english",
     "canopylabs/orpheus-arabic-saudi",
-    "allam-2-7b",
-    "whisper-large-v3",
-    "meta-llama/llama-prompt-guard-2-86m",
-    "meta-llama/llama-prompt-guard-2-22m",
-    "openai/gpt-oss-20b",
-    "qwen/qwen3.8-27b",
     "openai/gpt-oss-120b",
+    "openai/gpt-oss-safeguard-20b",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
+    "meta-llama/llama-prompt-guard-2-86m",
     "whisper-large-v3-turbo",
-    "openai/gpt-oss-safeguard-20b"
+    "allam-2-7b",
+    "meta-llama/llama-prompt-guard-2-22m",
+    "canopylabs/orpheus-v1-english",
+    "whisper-large-v3"
    ],
    "openrouter": [
     "inclusionai/ling-3.2-flash:free",
@@ -164,7 +164,6 @@
     "particle-ai/particle-1:free",
     "recursive/flint-v1.0:free",
     "nvidia/nemotron-3.5-super-vl:free",
-    "dots-studio/dots-3-note-preview:free",
     "nvidia/nemotron-3.5-lightning:free",
     "nvidia/nemotron-3-ultra-550b-a55b:free",
     "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
