@@ -148,10 +148,10 @@
  },
  "last_decision": {
   "BTC": {
-   "time": "2026-11-22T19:29:45",
-   "decision": "WAIT",
-   "price": 60667.69140625,
-   "why": "strong zone only 0.00R away"
+   "time": "2026-11-23T00:48:12",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (168 min)"
   },
   "GOLD": {
    "time": "2026-11-22T23:46:56",

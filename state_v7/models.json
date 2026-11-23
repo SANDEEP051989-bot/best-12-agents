@@ -145,20 +145,20 @@
   "2026-11-22|openrouter|429": 3
  },
  "discovered": {
-  "day": "2026-11-22",
+  "day": "2026-11-23",
   "models": {
    "groq": [
-    "canopylabs/orpheus-arabic-saudi",
-    "openai/gpt-oss-120b",
-    "openai/gpt-oss-safeguard-20b",
-    "qwen/qwen3.8-27b",
     "openai/gpt-oss-20b",
     "meta-llama/llama-prompt-guard-2-86m",
-    "whisper-large-v3-turbo",
-    "allam-2-7b",
-    "meta-llama/llama-prompt-guard-2-22m",
     "canopylabs/orpheus-v1-english",
-    "whisper-large-v3"
+    "qwen/qwen3.8-27b",
+    "canopylabs/orpheus-arabic-saudi",
+    "allam-2-7b",
+    "openai/gpt-oss-safeguard-20b",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo",
+    "openai/gpt-oss-120b",
+    "meta-llama/llama-prompt-guard-2-22m"
    ],
    "openrouter": [
     "inclusionai/ling-3.2-flash:free",
@@ -232,6 +232,7 @@
  "weights": {},
  "swap_done": {
   "2026-W45": true,
-  "2026-W46": true
+  "2026-W46": true,
+  "2026-W47": true
  }
 }

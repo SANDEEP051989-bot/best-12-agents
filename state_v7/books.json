@@ -33,7 +33,9 @@
     "events_sent": [],
     "trail_atr": 3.0,
     "fill_after": "2026-11-22T19:19:45",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 60635.71875,
+    "stop_now": 61688.6579363634
    },
    "GOLD": null,
    "OIL": null
