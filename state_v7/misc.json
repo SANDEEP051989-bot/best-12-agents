@@ -4,93 +4,93 @@
   "GOLD": {
    "trend": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "momentum": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "volatility": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "levels": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "special": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "macro": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "news": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "mood": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "bull": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "bear": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "time_machine": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    }
   },
   "OIL": {
    "trend": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "momentum": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "volatility": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "levels": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "special": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "macro": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "news": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "mood": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "bull": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "bear": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    },
    "time_machine": {
     "w": 1.0,
-    "week": "2026-W47"
+    "week": "2026-W48"
    }
   },
   "BTC": {
@@ -142,8 +142,8 @@
  },
  "outbox": [],
  "last_bar": {
-  "GOLD": "2026-11-20T17:00:00",
-  "OIL": "2026-11-20T17:00:00",
+  "GOLD": "2026-11-23T06:00:00",
+  "OIL": "2026-11-23T06:00:00",
   "BTC": "2026-11-22T18:00:00"
  },
  "last_decision": {
@@ -154,22 +154,22 @@
    "why": "market closed or data old (168 min)"
   },
   "GOLD": {
-   "time": "2026-11-22T23:46:56",
-   "decision": "MARKET CLOSED",
-   "price": null,
-   "why": "market closed or data old (2987 min)"
+   "time": "2026-11-23T08:06:28",
+   "decision": "WAIT",
+   "price": 3620.800048828125,
+   "why": "extreme volatility"
   },
   "OIL": {
-   "time": "2026-11-22T23:46:56",
-   "decision": "MARKET CLOSED",
-   "price": null,
-   "why": "market closed or data old (2987 min)"
+   "time": "2026-11-23T08:06:28",
+   "decision": "WAIT",
+   "price": 83.20999908447266,
+   "why": "only 2 SELL votes (need 6)"
   }
  },
  "last_report_sent": {
   "BTC": "2026-11-22T19:00:00",
-  "GOLD": "2026-11-20T18:00:00",
-  "OIL": "2026-11-20T18:00:00"
+  "GOLD": "2026-11-23T07:00:00",
+  "OIL": "2026-11-23T07:00:00"
  },
  "last_daily_pdf": "2026-11-22",
  "last_weekly_pdf": "2026-W47"
