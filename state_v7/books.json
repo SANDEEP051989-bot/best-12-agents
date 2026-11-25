@@ -35,7 +35,30 @@
     "fill_after": "2026-11-25T02:10:45",
     "daily": "DOWN"
    },
-   "GOLD": null,
+   "GOLD": {
+    "mkt": "GOLD",
+    "d": "SELL",
+    "signal_ts": "2026-11-25T08:00:00",
+    "entry_plan": 3561.0,
+    "stop0": 3594.0979957765567,
+    "dist": 33.09799577655654,
+    "t": [
+     3527.9020042234433,
+     3494.804008446887,
+     3461.7060126703304,
+     3428.6080168937738
+    ],
+    "cost_r": 0.05379479809049756,
+    "kind": "trend",
+    "risk_pct": 0.5,
+    "risk_rs": 100.0,
+    "open_day": "2026-11-25",
+    "status": "open",
+    "events_sent": [],
+    "trail_atr": 2.5,
+    "fill_after": "2026-11-25T10:13:05",
+    "daily": "DOWN"
+   },
    "OIL": {
     "mkt": "OIL",
     "d": "SELL",
@@ -58,7 +81,9 @@
     "events_sent": [],
     "trail_atr": 3.0,
     "fill_after": "2026-11-25T00:51:44",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 81.75,
+    "stop_now": 82.72117623981585
    }
   },
   "closed": [

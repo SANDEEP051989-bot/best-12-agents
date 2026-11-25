@@ -842,6 +842,21 @@
    "cost_r": 0.07294978127401901,
    "trend": "DOWN",
    "fill_after": "2026-11-25T02:10:45"
+  },
+  {
+   "key": "GOLD|trend|wait",
+   "mkt": "GOLD",
+   "agent": "trend",
+   "kind": "wait",
+   "d": "SELL",
+   "model": "code",
+   "signal_ts": "2026-11-25T08:00:00",
+   "stop": 3594.0979957765567,
+   "target": 3494.804008446887,
+   "dist": 33.09799577655654,
+   "cost_r": 0.05379479809049756,
+   "trend": "DOWN",
+   "fill_after": "2026-11-25T10:13:05"
   }
  ],
  "graded": [
@@ -29403,6 +29418,42 @@
     "macro": "WAIT",
     "news": "WAIT",
     "mood": "SELL",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "GOLD",
+   "ts": "2026-11-25T08:00:00",
+   "ai": false,
+   "v": {
+    "trend": "WAIT",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "WAIT",
+    "news": "WAIT",
+    "mood": "WAIT",
+    "bull": "WAIT",
+    "bear": "WAIT",
+    "time_machine": "WAIT"
+   }
+  },
+  {
+   "mkt": "OIL",
+   "ts": "2026-11-25T08:00:00",
+   "ai": false,
+   "v": {
+    "trend": "SELL",
+    "momentum": "WAIT",
+    "volatility": "WAIT",
+    "levels": "WAIT",
+    "special": "WAIT",
+    "macro": "SELL",
+    "news": "WAIT",
+    "mood": "WAIT",
     "bull": "WAIT",
     "bear": "WAIT",
     "time_machine": "WAIT"
