@@ -1,11 +1,74 @@
 {
  "system": {
-  "open": {},
+  "open": {
+   "BTC": {
+    "mkt": "BTC",
+    "d": "SELL",
+    "signal_ts": "2026-11-25T11:00:00",
+    "entry_plan": 58549.05078125,
+    "stop0": 59528.73768706539,
+    "dist": 979.6869058153898,
+    "t": [
+     57569.36387543461,
+     56589.67696961922,
+     55609.99006380383,
+     54630.30315798844
+    ],
+    "cost_r": 0.07171562722788849,
+    "kind": "trend",
+    "risk_pct": 0.5,
+    "risk_rs": 100.0,
+    "open_day": "2026-11-25",
+    "status": "open",
+    "events_sent": [],
+    "trail_atr": 3.0,
+    "fill_after": "2026-11-25T12:32:08",
+    "votes": {
+     "trend": "SELL",
+     "momentum": "SELL",
+     "volatility": "SELL",
+     "levels": "WAIT",
+     "special": "WAIT",
+     "macro": "SELL",
+     "news": "WAIT",
+     "mood": "SELL",
+     "bull": "WAIT",
+     "bear": "SELL",
+     "time_machine": "SELL"
+    },
+    "daily": "DOWN",
+    "msg_failed": false
+   }
+  },
   "closed": [],
   "risk": {}
  },
  "rules_twin": {
-  "open": {},
+  "open": {
+   "BTC": {
+    "mkt": "BTC",
+    "d": "SELL",
+    "signal_ts": "2026-11-25T11:00:00",
+    "entry_plan": 58549.05078125,
+    "stop0": 59528.73768706539,
+    "dist": 979.6869058153898,
+    "t": [
+     57569.36387543461,
+     56589.67696961922,
+     55609.99006380383,
+     54630.30315798844
+    ],
+    "cost_r": 0.07171562722788849,
+    "kind": "trend",
+    "risk_pct": 0.5,
+    "risk_rs": 100.0,
+    "open_day": "2026-11-25",
+    "status": "open",
+    "events_sent": [],
+    "trail_atr": 3.0,
+    "fill_after": "2026-11-25T12:32:08"
+   }
+  },
   "closed": [],
   "risk": {}
  },
@@ -33,7 +96,9 @@
     "events_sent": [],
     "trail_atr": 3.0,
     "fill_after": "2026-11-25T02:10:45",
-    "daily": "DOWN"
+    "daily": "DOWN",
+    "fill": 59160.80859375,
+    "stop_now": 60145.999263876955
    },
    "GOLD": {
     "mkt": "GOLD",
