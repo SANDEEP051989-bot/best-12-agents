@@ -154,16 +154,16 @@
    "why": "strong zone only 0.00R away"
   },
   "GOLD": {
-   "time": "2026-11-26T03:01:24",
-   "decision": "WAIT",
-   "price": 3597.800048828125,
-   "why": "no trend"
+   "time": "2026-11-26T13:04:06",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (484 min)"
   },
   "OIL": {
-   "time": "2026-11-26T03:01:24",
-   "decision": "WAIT",
-   "price": 83.93000030517578,
-   "why": "daily view against the trend"
+   "time": "2026-11-26T13:04:06",
+   "decision": "MARKET CLOSED",
+   "price": null,
+   "why": "market closed or data old (484 min)"
   }
  },
  "last_report_sent": {
