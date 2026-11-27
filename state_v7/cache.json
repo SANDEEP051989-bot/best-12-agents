@@ -6,7 +6,7 @@
  },
  "flows": {
   "day": "2026-11-27",
-  "tried": "2026-11-27T14:14:18",
+  "tried": "2026-11-27T22:53:46",
   "cot_GOLD": {
    "net": 102942.0,
    "rank": 0.2
@@ -16,8 +16,8 @@
    "rank": 0.0967741935483871
   },
   "wti_spread": {
-   "spread": 1.4,
-   "chg5": 0.45,
+   "spread": 1.12,
+   "chg5": 0.17,
    "contracts": "CLF27.NYM - CLG27.NYM"
   }
  },
@@ -54,7 +54,7 @@
     "impact": "Medium"
    }
   ],
-  "fetched": "2026-11-27T14:14:18"
+  "fetched": "2026-11-27T22:53:46"
  },
  "news_seen": {},
  "last_report_text": {
