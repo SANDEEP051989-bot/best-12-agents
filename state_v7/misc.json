@@ -154,16 +154,16 @@
    "why": "no trend"
   },
   "GOLD": {
-   "time": "2026-11-27T04:29:49",
+   "time": "2026-11-27T14:14:18",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (1410 min)"
+   "why": "market closed or data old (1994 min)"
   },
   "OIL": {
-   "time": "2026-11-27T04:29:49",
+   "time": "2026-11-27T14:14:18",
    "decision": "MARKET CLOSED",
    "price": null,
-   "why": "market closed or data old (1410 min)"
+   "why": "market closed or data old (1994 min)"
   }
  },
  "last_report_sent": {
